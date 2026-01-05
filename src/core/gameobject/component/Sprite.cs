@@ -16,10 +16,10 @@ public class Sprite : Component, Drawer
     public float LayerOffset { get; set; } = 0;
     public SpriteEffects Effect { get; set; } = SpriteEffects.None;
 
-    public Sprite(GameObject parent, string name) : base(parent)
+    public Sprite(GameObject parent, string path) : base(parent)
     {
         RenderLayer = Parent.RenderLayer;
-        Texture = Main.ContentManager.Load<Texture2D>(name);
+        Texture = Main.ContentManager.Load<Texture2D>(path);
     }
 
     public void Draw()
