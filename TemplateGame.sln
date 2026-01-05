@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateGame", "TemplateGame.csproj", "{8292C1C5-3221-41B6-AD0F-FD21078C000C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentBuilder", "ContentBuilder\ContentBuilder.csproj", "{73D07B60-5664-40DA-B4E7-AAD0149261CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8292C1C5-3221-41B6-AD0F-FD21078C000C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8292C1C5-3221-41B6-AD0F-FD21078C000C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8292C1C5-3221-41B6-AD0F-FD21078C000C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8292C1C5-3221-41B6-AD0F-FD21078C000C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73D07B60-5664-40DA-B4E7-AAD0149261CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73D07B60-5664-40DA-B4E7-AAD0149261CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73D07B60-5664-40DA-B4E7-AAD0149261CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73D07B60-5664-40DA-B4E7-AAD0149261CB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2484B0B2-7F82-4500-AAF8-C1D00A5A3F9B}
+	EndGlobalSection
+EndGlobal
