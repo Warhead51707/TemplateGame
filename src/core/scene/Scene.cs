@@ -3,6 +3,8 @@ using TemplateGame.src.core;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Linq;
+using System;
+using System.Diagnostics;
 
 namespace TemplateGame;
 
@@ -32,7 +34,7 @@ namespace TemplateGame;
 
     public virtual void Draw()
     {
-        var drawersByLayer = Drawers.GroupBy(d => d.RenderLayer);
+        var drawersByLayer = Drawers.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
 
         foreach (var drawerGroup in drawersByLayer)
         {

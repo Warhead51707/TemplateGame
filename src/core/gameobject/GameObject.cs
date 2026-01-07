@@ -19,7 +19,7 @@ public class GameObject : Updater, Drawer
     {
        Name = name;
        Position = position;
-       RenderLayer = RenderLayers.Default;
+       RenderLayer = new RenderLayer(RenderSettings.Default, 0, null);
     }
 
     public virtual void Initialize()

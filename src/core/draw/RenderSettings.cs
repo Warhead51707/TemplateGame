@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TemplateGame;
 
-public struct RenderSettings
+public class RenderSettings
 {
     public static RenderSettings Default = new RenderSettings(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointWrap, null, null, null, Matrix.Identity);
 

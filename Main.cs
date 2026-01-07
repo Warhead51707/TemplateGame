@@ -26,6 +26,12 @@ public class Main : Game
 
     protected override void Initialize()
     {
+        GraphicsDeviceManager.HardwareModeSwitch = false;
+        GraphicsDeviceManager.IsFullScreen = false;
+        GraphicsDeviceManager.ApplyChanges();
+
+        Window.AllowUserResizing = true;
+
         MainGraphicsDevice = GraphicsDevice;
         ContentManager = Content;
         base.Initialize();
@@ -54,7 +60,7 @@ public class Main : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
+        GraphicsDevice.Clear(Color.Black);
 
         SceneManager.Draw();
 

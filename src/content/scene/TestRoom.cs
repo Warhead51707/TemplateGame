@@ -11,8 +11,12 @@ public class TestRoom : Scene
     {
         Camera.Zoom = 3f;
 
-        Test test = new Test(Vector2.Zero);
+        Player player = new Player(Vector2.Zero);
+        TestRoomTileGrid tileGrid = new TestRoomTileGrid(Vector2.Zero);
 
-        AddGameObject(test);
+        AddGameObject(player);
+        AddGameObject(tileGrid);
+
+        Camera.SetTarget(player);
     }
 }
