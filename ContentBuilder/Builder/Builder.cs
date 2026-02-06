@@ -38,6 +38,7 @@ public class Builder : ContentBuilder
 
         // include everything in the folder
         contentCollection.Include<WildcardRule>("*");
+        contentCollection.IncludeCopy<WildcardRule>("animation/*.json");
 
         // By default, all content will be imported from the Assets folder using the default importer for their file type.
         // Please add any custom content collection rules here.

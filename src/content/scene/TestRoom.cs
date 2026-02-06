@@ -9,7 +9,7 @@ public class TestRoom : Scene
 
     public override void Initialize()
     {
-        Camera.Zoom = 3f;
+        Camera.Zoom = 4f;
 
         Player player = new Player(Vector2.Zero);
         TestRoomTileGrid tileGrid = new TestRoomTileGrid(Vector2.Zero);

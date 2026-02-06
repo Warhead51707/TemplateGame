@@ -1,12 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using SharpDX.Direct3D11;
 
 namespace TemplateGame;
 public class Player : GameObject
 {
     private float movementSpeed = 40f;
-    public Player(Vector2 position) : base("test", position)
+    public Player(Vector2 position) : base("player", position)
     {
     }
 
@@ -31,10 +30,17 @@ public class Player : GameObject
     private void MovementController()
     {
         KeyboardState keyboardState = Keyboard.GetState();
+        Vector2 movementDirection = Vector2.Zero;
 
-        if (keyboardState.IsKeyDown(Keys.W)) Position += new Vector2(0, -1) * movementSpeed * Main.DeltaTime;
-        if (keyboardState.IsKeyDown(Keys.A)) Position += new Vector2(-1, 0) * movementSpeed * Main.DeltaTime;
-        if (keyboardState.IsKeyDown(Keys.S)) Position += new Vector2(0, 1) * movementSpeed * Main.DeltaTime;
-        if (keyboardState.IsKeyDown(Keys.D)) Position += new Vector2(1, 0) * movementSpeed * Main.DeltaTime;
+        if (keyboardState.IsKeyDown(Keys.W)) movementDirection.Y -= 1;
+        if (keyboardState.IsKeyDown(Keys.A)) movementDirection.X -= 1;
+        if (keyboardState.IsKeyDown(Keys.S)) movementDirection.Y += 1;
+        if (keyboardState.IsKeyDown(Keys.D)) movementDirection.X += 1;
+
+        if (movementDirection.X == 0 && movementDirection.Y == 0) return;
+
+        movementDirection.Normalize();
+
+        Position += movementDirection * movementSpeed * Main.DeltaTime;
     }
 }

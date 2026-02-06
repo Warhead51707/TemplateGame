@@ -4,19 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TemplateGame.src.core;
 
 namespace TemplateGame;
-public class GameObject : Updater, Drawer
+public abstract class GameObject
 {
+    public int Priority { get; set; } = 0;
     public string Name { get; protected set; }
     public Vector2 Position { get; protected set; }
     public RenderLayer RenderLayer { get; protected set; }
 
     private List<Component> Components = new List<Component>();
 
-    public GameObject(string name, Vector2 position)
+    public GameObject(string name, Vector2 position, int priority = 0)
     {
+       Priority = priority;
        Name = name;
        Position = position;
        RenderLayer = new RenderLayer(RenderSettings.Default, 0, null);
@@ -31,9 +32,7 @@ public class GameObject : Updater, Drawer
     {
         foreach (Component component in Components)
         {
-            if (component is Updater updater == false) continue;
-
-            updater.Update();
+            component.Update();
         }
     }
 
@@ -41,9 +40,7 @@ public class GameObject : Updater, Drawer
     {
         foreach (Component component in Components)
         {
-            if (component is Drawer drawer == false) continue;
-
-            drawer.Draw();
+            component.Draw();
         }
     }
 

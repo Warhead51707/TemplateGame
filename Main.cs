@@ -29,6 +29,7 @@ public class Main : Game
         GraphicsDeviceManager.HardwareModeSwitch = false;
         GraphicsDeviceManager.IsFullScreen = false;
         GraphicsDeviceManager.ApplyChanges();
+        IsFixedTimeStep = false;
 
         Window.AllowUserResizing = true;
 

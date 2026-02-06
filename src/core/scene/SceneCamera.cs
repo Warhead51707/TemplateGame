@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Assimp;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace TemplateGame;
 public class SceneCamera
@@ -7,6 +9,9 @@ public class SceneCamera
     public float Zoom { get; set; } = 1.0f;
     public Vector2 Position { get; set; } = Vector2.Zero;
     public Matrix Matrix { get; private set; } = Matrix.Identity;
+
+    private float followSpeed = 5f;
+    private float deadzoneMultiplier = 0.2f;
 
     private GameObject target;
 
@@ -17,15 +22,22 @@ public class SceneCamera
 
     public void Update()
     {
-        if (target != null)
-        {
-            Position = target.Position;
-        }
-
         float screenWidth = Main.GraphicsDeviceManager.GraphicsDevice.Viewport.Width;
         float screenHeight = Main.GraphicsDeviceManager.GraphicsDevice.Viewport.Height;
 
-        Matrix = Matrix.CreateTranslation(-Position.X, -Position.Y, 0) *
+        if (Vector2.Distance(Position, target.Position) > followSpeed * deadzoneMultiplier)
+        {
+            Vector2 roundedLerpPosition = Vector2.Round(Position * Zoom * 16) / (Zoom * 16);
+            Vector2 roundedLerpTargetPosition = Vector2.Round(target.Position * Zoom * 16) / (Zoom * 16);
+            float lerpAmount = 1.0f - (float)Math.Exp(-followSpeed * Main.DeltaTime);
+
+            Position = Vector2.Lerp(roundedLerpPosition, roundedLerpTargetPosition, lerpAmount);
+        }
+
+        float roundedX = -MathF.Round(Position.X * Zoom * 16) / (Zoom * 16);
+        float roundedY = -MathF.Round(Position.Y * Zoom * 16) / (Zoom * 16);
+
+        Matrix = Matrix.CreateTranslation(roundedX, roundedY, 0) *
             Matrix.CreateScale(Zoom) *
             Matrix.CreateTranslation(screenWidth / 2, screenHeight / 2, 0);
     }

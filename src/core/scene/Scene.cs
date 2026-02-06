@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TemplateGame.src.core;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Linq;
@@ -12,8 +11,9 @@ namespace TemplateGame;
 {
     public string Name { get; protected set; }
     public SceneCamera Camera { get; protected set; } = new SceneCamera();
-    public List<Updater> Updators { get; protected set; } = new List<Updater>();
-    public List<Drawer> Drawers { get; protected set; } = new List<Drawer>();
+
+    private List<GameObject> gameObjects = new List<GameObject>();
+    private IEnumerable<IGrouping<RenderLayer, GameObject>> drawCache = Enumerable.Empty<IGrouping<RenderLayer, GameObject>>();
 
     public Scene(string name)
     {
@@ -24,44 +24,46 @@ namespace TemplateGame;
 
     public virtual void Update()
     {
-        Camera.Update();
-
-        foreach (Updater updater in Updators)
+        foreach (GameObject gameObject in gameObjects)
         {
-            updater.Update();
+            gameObject.Update();
         }
+
+        Camera.Update();
     }
 
     public virtual void Draw()
     {
-        var drawersByLayer = Drawers.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
-
-        foreach (var drawerGroup in drawersByLayer)
+        foreach (var drawerGroup in drawCache)
         {
             RenderLayer renderLayer = drawerGroup.Key;
             RenderSettings renderSettings = renderLayer.RenderSettings;
 
-            Main.MainGraphicsDevice.SetRenderTarget(renderLayer.RenderTarget);
+            bool hasRenderTarget = false;
+
+            if (renderLayer.RenderTarget != null)
+            {
+                hasRenderTarget = true;
+                Main.MainGraphicsDevice.SetRenderTarget(renderLayer.RenderTarget);
+            }
 
             DrawManager.SpriteBatch.Begin(renderSettings.SortMode, renderSettings.BlendState, renderSettings.SamplerState, renderSettings.DepthStencilState, renderSettings.RasterizerState, renderSettings.Effect, Camera.Matrix);
 
-            foreach (Drawer drawer in drawerGroup)
+            foreach (GameObject drawer in drawerGroup)
             {
                 drawer.Draw();
             }
 
             DrawManager.SpriteBatch.End();
-        }
 
-        foreach (var drawerGroup in drawersByLayer.OrderBy(dg => dg.Key.Order))
-        {
-            RenderLayer renderLayer = drawerGroup.Key;
+            if (hasRenderTarget)
+            {
+                Main.MainGraphicsDevice.SetRenderTarget(null);
 
-            if (renderLayer.RenderTarget == null) continue;
-
-            DrawManager.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-            DrawManager.SpriteBatch.Draw(renderLayer.RenderTarget, Vector2.Zero, Color.White);
-            DrawManager.SpriteBatch.End();
+                DrawManager.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+                DrawManager.SpriteBatch.Draw(renderLayer.RenderTarget, Vector2.Zero, Color.White);
+                DrawManager.SpriteBatch.End();
+            }
         }
     }
 
@@ -69,7 +71,9 @@ namespace TemplateGame;
     {
         gameObject.Initialize();
 
-        Updators.Add(gameObject);
-        Drawers.Add(gameObject);
+        gameObjects.Add(gameObject);
+
+        gameObjects = gameObjects.OrderByDescending(g => g.Priority).ToList();
+        drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
     }
 }

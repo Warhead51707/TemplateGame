@@ -1,10 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using TemplateGame.src.core;
 
 namespace TemplateGame;
-public class TileGrid : Component, Drawer
+public class TileGrid : Component
 {
     public Dictionary<string, Func<Tile>> TileRegistry = new Dictionary<string, Func<Tile>>();
     public Dictionary<Vector2, Tile> Tiles = new Dictionary<Vector2, Tile>();
@@ -48,7 +47,7 @@ public class TileGrid : Component, Drawer
         Tiles.Add(gridPosition, tile);
     } 
 
-    public void Draw()
+    public override void Draw()
     {
         SceneCamera camera = Main.SceneManager.CurrentScene.Camera;
 

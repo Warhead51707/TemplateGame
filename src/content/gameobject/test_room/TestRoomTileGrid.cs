@@ -13,8 +13,7 @@ public class TestRoomTileGrid : GameObject
 
         AddComponent(tileGrid);
 
-        tileGrid.RegisterTile("checkertile_1");
-        tileGrid.RegisterTile("checkertile_2");
+        tileGrid.RegisterTile("debug_tile");
 
         for (int x = -6; x <= 6; x++)
         {
@@ -22,13 +21,7 @@ public class TestRoomTileGrid : GameObject
             {
                 Vector2 pos = new Vector2(x, y);
 
-                if ((x + y) % 2 == 0)
-                {
-                    tileGrid.PlaceTile(pos, "checkertile_1");
-                    continue;
-                }
-
-                tileGrid.PlaceTile(pos, "checkertile_2");
+                tileGrid.PlaceTile(pos, "debug_tile");
             }
         }
 
