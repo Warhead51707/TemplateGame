@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Text.Json.Serialization;
 
 namespace TemplateGame;
 public class Tile

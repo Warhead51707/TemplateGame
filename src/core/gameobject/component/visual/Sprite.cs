@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Text.Json.Serialization;
 
 namespace TemplateGame;
 public class Sprite : Component
 {
+    [JsonIgnore]
     public Texture2D Texture { get; set; }
 
     // Sprite settings
@@ -13,7 +15,7 @@ public class Sprite : Component
     public Color Color { get; set; } = Color.White;
     public float LayerOffset { get; set; } = 0;
     public SpriteEffects Effect { get; set; } = SpriteEffects.None;
-    public Vector2 Size { get; private set; } = Vector2.Zero;
+    public Vector2 Size { get; set; } = Vector2.Zero;
 
     public Sprite(GameObject parent, string path) : base(parent)
     {

@@ -1,26 +1,29 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace TemplateGame;
 public abstract class GameObject
 {
     public int Priority { get; set; } = 0;
-    public string Name { get; protected set; }
-    public Vector2 Position { get; protected set; }
-    public RenderLayer RenderLayer { get; protected set; }
-
-    private List<Component> Components = new List<Component>();
+    public string Name { get; set; }
+    public Vector2 Position { get; set; }
+    public RenderLayer RenderLayer { get; set; }
+    public List<Component> Components { get; set; } = new List<Component>();
+    public SaveData SaveData { get; set; } = new SaveData();
+    public bool IsDirty { get; set; } = false;
 
     public GameObject(string name, Vector2 position, int priority = 0)
     {
-       Priority = priority;
-       Name = name;
-       Position = position;
-       RenderLayer = new RenderLayer(RenderSettings.Default, 0, null);
+        Priority = priority;
+        Name = name;
+        Position = position;
+        RenderLayer = new RenderLayer(RenderSettings.Default, 0, null);
     }
 
     public virtual void Initialize()
@@ -42,6 +45,28 @@ public abstract class GameObject
         {
             component.Draw();
         }
+    }
+
+    public virtual SaveData Save()
+    {
+        SaveData.Json["name"] = JsonSerializer.SerializeToElement(Name);
+        SaveData.Json["position"] = JsonSerializer.SerializeToElement(new { x = Position.X, y = Position.Y });
+
+        List<SaveData> componentSaveData = new List<SaveData>();
+
+        foreach (Component component in Components)
+        {
+            componentSaveData.Add(component.Save());
+        }
+
+        SaveData.Json["components"] = JsonSerializer.SerializeToElement(componentSaveData);
+
+        return SaveData;
+    }
+
+    public virtual void Load(SaveData saveData)
+    {
+        SaveData = saveData;
     }
 
     public void AddComponent(Component component)

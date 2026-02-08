@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework;
 using System.Linq;
 using System;
 using System.Diagnostics;
+using System.Text.Json;
+using System.IO;
 
 namespace TemplateGame;
 
@@ -75,5 +77,26 @@ namespace TemplateGame;
 
         gameObjects = gameObjects.OrderByDescending(g => g.Priority).ToList();
         drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
+    }
+
+    public virtual void Save()
+    {
+        List<SaveData> saveData = new List<SaveData>();
+
+        foreach (GameObject gameObject in gameObjects)
+        {
+            saveData.Add(gameObject.Save());
+        }
+
+        SceneModel model = new SceneModel(saveData);
+
+        JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions()
+        {
+            WriteIndented = true
+        };
+
+        string json = JsonSerializer.Serialize(model, jsonSerializerOptions);
+
+        File.WriteAllText("Content/scene/" + Name + ".json", json);
     }
 }

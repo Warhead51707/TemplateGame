@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ImGuiNET;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.ImGuiNet;
 
 namespace TemplateGame;
 
@@ -12,6 +14,8 @@ public class Main : Game
     public static GraphicsDevice MainGraphicsDevice;
     public static ContentManager ContentManager;
     public static SceneManager SceneManager = new SceneManager();
+
+    public ImGuiManager ImGuiManager;
 
     // Properties
     public static GameTime GameTime { get ; private set; }
@@ -26,15 +30,22 @@ public class Main : Game
 
     protected override void Initialize()
     {
+        // Settings
         GraphicsDeviceManager.HardwareModeSwitch = false;
         GraphicsDeviceManager.IsFullScreen = false;
         GraphicsDeviceManager.ApplyChanges();
         IsFixedTimeStep = false;
 
+        // Window Properties
         Window.AllowUserResizing = true;
 
+        //References 
         MainGraphicsDevice = GraphicsDevice;
         ContentManager = Content;
+
+        // Debug UI
+        ImGuiManager = new ImGuiManager(this);
+
         base.Initialize();
     }
 
@@ -42,6 +53,9 @@ public class Main : Game
     {
         // Main Spritebatch
         DrawManager.Initialize(GraphicsDevice);
+
+        // Debug UI
+        ImGuiManager.Add(new DebugMainMenu());
 
         // Set Scene
         TestRoom testRoom = new TestRoom();
@@ -64,6 +78,10 @@ public class Main : Game
         GraphicsDevice.Clear(Color.Black);
 
         SceneManager.Draw();
+
+#if DEBUG
+        ImGuiManager.Draw();
+#endif
 
         base.Draw(gameTime);
     }

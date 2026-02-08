@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace TemplateGame;
 public class TileGrid : Component
 {
     public Dictionary<string, Func<Tile>> TileRegistry = new Dictionary<string, Func<Tile>>();
+
     public Dictionary<Vector2, Tile> Tiles = new Dictionary<Vector2, Tile>();
     public RenderLayer RenderLayer { get; protected set; }
     public Vector2 TileSize { get; protected set; }
