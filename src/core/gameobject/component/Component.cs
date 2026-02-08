@@ -9,11 +9,13 @@ using System.Threading.Tasks;
 namespace TemplateGame;
 public abstract class Component
 {
+    public string Name { get; set; }
     public GameObject Parent { get; private set; }
     public SaveData SaveData { get; private set; } = new SaveData();
 
-    public Component(GameObject parent)
+    public Component(string name, GameObject parent)
     {
+        Name = name;
         Parent = parent;
     }
 
@@ -34,6 +36,7 @@ public abstract class Component
 
     public virtual SaveData Save()
     {
+        SaveData.Json["name"] = JsonSerializer.SerializeToElement(Name);
         return SaveData;
     }
 

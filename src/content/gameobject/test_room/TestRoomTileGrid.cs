@@ -3,7 +3,7 @@
 namespace TemplateGame;
 public class TestRoomTileGrid : GameObject
 {
-    public TestRoomTileGrid(Vector2 position) : base("test_tile_grid", position)
+    public TestRoomTileGrid(Vector2 position) : base("test_tile_grid", () => new TestRoomTileGrid(Vector2.Zero), position)
     {
     }
 

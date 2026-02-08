@@ -11,7 +11,7 @@ public class AnimationTree : Component
     public Dictionary<Predicate<bool>, Animation> Animations { get; private set; } = new Dictionary<Predicate<bool>, Animation>();
     public Animation CurrentAnimation { get; private set; }
 
-    public AnimationTree(GameObject parent) : base(parent)
+    public AnimationTree(GameObject parent) : base("animation_tree", parent)
     {
     }
 

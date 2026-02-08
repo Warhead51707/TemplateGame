@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace TemplateGame;
@@ -12,10 +14,25 @@ public class TileGrid : Component
     public RenderLayer RenderLayer { get; protected set; }
     public Vector2 TileSize { get; protected set; }
 
-    public TileGrid(GameObject parent, Vector2 tileSize) : base(parent)
+    public TileGrid(GameObject parent, Vector2 tileSize) : base("tilegrid", parent)
     {
         RenderLayer = RenderLayers.Default;
         TileSize = tileSize;
+    }
+
+    public override SaveData Save()
+    {
+        SaveData.Json["tile_size"] = JsonSerializer.SerializeToElement(new { x = TileSize.X, y = TileSize.Y });
+
+        var tilesList = Tiles.Select(t => new
+        {
+            position = new { x = t.Key.X, y = t.Key.Y },
+            name = t.Value.Name
+        }).ToList();
+
+        SaveData.Json["tiles"] = JsonSerializer.SerializeToElement(tilesList);
+
+        return base.Save();
     }
 
     public void RegisterTile(string name)

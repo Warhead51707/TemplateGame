@@ -17,7 +17,7 @@ public class Sprite : Component
     public SpriteEffects Effect { get; set; } = SpriteEffects.None;
     public Vector2 Size { get; set; } = Vector2.Zero;
 
-    public Sprite(GameObject parent, string path) : base(parent)
+    public Sprite(GameObject parent, string path) : base("sprite", parent)
     {
         Texture = Main.ContentManager.Load<Texture2D>(path);
         Size = new Vector2(Texture.Width, Texture.Height);

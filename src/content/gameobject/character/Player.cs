@@ -5,7 +5,7 @@ namespace TemplateGame;
 public class Player : GameObject
 {
     private float movementSpeed = 40f;
-    public Player(Vector2 position) : base("player", position)
+    public Player(Vector2 position) : base("player", () => new Player(Vector2.Zero), position)
     {
     }
 
