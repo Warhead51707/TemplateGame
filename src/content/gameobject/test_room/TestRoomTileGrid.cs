@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace TemplateGame;
 public class TestRoomTileGrid : GameObject
@@ -13,15 +14,29 @@ public class TestRoomTileGrid : GameObject
 
         AddComponent(tileGrid);
 
-        tileGrid.RegisterTile("debug_tile");
-
         for (int x = -6; x <= 6; x++)
         {
             for (int y = -4; y <= 4; y++)
             {
                 Vector2 pos = new Vector2(x, y);
 
-                tileGrid.PlaceTile(pos, "debug_tile");
+                Random random = new Random();
+
+                int number = random.Next(0, 10);
+
+                if (number < 7)
+                {
+                    tileGrid.PlaceTile(pos, "snow_1");
+                    continue;
+                }
+
+                if (number >= 7 && number < 9)
+                {
+                    tileGrid.PlaceTile(pos, "snow_2");
+                    continue;
+                }
+
+                tileGrid.PlaceTile(pos, "snow_3");
             }
         }
 

@@ -8,8 +8,6 @@ using System.Text.Json.Serialization;
 namespace TemplateGame;
 public class TileGrid : Component
 {
-    public Dictionary<string, Func<Tile>> TileRegistry = new Dictionary<string, Func<Tile>>();
-
     public Dictionary<Vector2, Tile> Tiles = new Dictionary<Vector2, Tile>();
     public RenderLayer RenderLayer { get; protected set; }
     public Vector2 TileSize { get; protected set; }
@@ -35,23 +33,9 @@ public class TileGrid : Component
         return base.Save();
     }
 
-    public void RegisterTile(string name)
-    {
-        TileRegistry.Add(name, () =>
-        {
-            Tile tile = new Tile(this, name);
-            return tile;
-        });
-    }
-
-    public Tile GetTileInstance(string name)
-    {
-        return TileRegistry[name]();
-    }
-
     public void PlaceTile(Vector2 gridPosition, string name)
     {
-        Tile tile = GetTileInstance(name);
+        Tile tile = new Tile(this, name);
 
         if (tile == null) return;
 

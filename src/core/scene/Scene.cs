@@ -13,6 +13,7 @@ namespace TemplateGame;
 {
     public string Name { get; protected set; }
     public SceneCamera Camera { get; protected set; } = new SceneCamera();
+    public string SceneState { get; set; } = "Play";
 
     private List<GameObject> gameObjects = new List<GameObject>();
     private IEnumerable<IGrouping<RenderLayer, GameObject>> drawCache = Enumerable.Empty<IGrouping<RenderLayer, GameObject>>();

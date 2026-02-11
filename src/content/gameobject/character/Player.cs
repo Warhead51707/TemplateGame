@@ -5,6 +5,8 @@ namespace TemplateGame;
 public class Player : GameObject
 {
     private float movementSpeed = 40f;
+    private Vector2 facingDirection = Vector2.Zero;
+    private KeyboardState previousKeyboardState;
     public Player(Vector2 position) : base("player", () => new Player(Vector2.Zero), position)
     {
     }
@@ -13,9 +15,16 @@ public class Player : GameObject
     {
         RenderLayer.Order = 1;
 
-        Sprite sprite = new Sprite(this, Name);
+        //Sprite sprite = new Sprite(this, Name);
+        //AddComponent(sprite);
 
-        AddComponent(sprite);
+        AnimationTree animationTree = new AnimationTree(this);
+        animationTree.AddAnimation("player_idle_foward", _ => facingDirection == Vector2.Zero || facingDirection == new Vector2(0,1));
+        animationTree.AddAnimation("player_idle_left", _ => facingDirection == new Vector2(-1, 0));
+        animationTree.AddAnimation("player_idle_right", _ => facingDirection == new Vector2(1, 0));
+        animationTree.AddAnimation("player_move_up", _ => facingDirection == new Vector2(0, -1));
+
+        AddComponent(animationTree);
 
         base.Initialize();
     }
@@ -30,14 +39,21 @@ public class Player : GameObject
     private void MovementController()
     {
         KeyboardState keyboardState = Keyboard.GetState();
+
         Vector2 movementDirection = Vector2.Zero;
 
-        if (keyboardState.IsKeyDown(Keys.W)) movementDirection.Y -= 1;
-        if (keyboardState.IsKeyDown(Keys.A)) movementDirection.X -= 1;
-        if (keyboardState.IsKeyDown(Keys.S)) movementDirection.Y += 1;
-        if (keyboardState.IsKeyDown(Keys.D)) movementDirection.X += 1;
+        if (keyboardState.IsKeyDown(Keys.W)) movementDirection = new Vector2(0,-1);
+        if (keyboardState.IsKeyDown(Keys.A)) movementDirection = new Vector2(-1,0);
+        if (keyboardState.IsKeyDown(Keys.S)) movementDirection = new Vector2(0,1);
+        if (keyboardState.IsKeyDown(Keys.D)) movementDirection = new Vector2(1,0);
+
+        if (previousKeyboardState.IsKeyDown(Keys.W) && movementDirection == Vector2.Zero) facingDirection = Vector2.Zero;
 
         if (movementDirection.X == 0 && movementDirection.Y == 0) return;
+
+        previousKeyboardState = keyboardState;
+
+        facingDirection = movementDirection;
 
         movementDirection.Normalize();
 

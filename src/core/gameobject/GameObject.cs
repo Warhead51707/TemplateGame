@@ -64,7 +64,11 @@ public abstract class GameObject
 
         foreach (Component component in Components)
         {
-            componentSaveData.Add(component.Save());
+            SaveData cSaveData = component.Save();
+
+            if (cSaveData.Json.Count == 1) continue;
+
+            componentSaveData.Add(cSaveData);
         }
 
         SaveData.Json["components"] = JsonSerializer.SerializeToElement(componentSaveData);
