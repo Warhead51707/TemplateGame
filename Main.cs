@@ -9,6 +9,8 @@ namespace TemplateGame;
 
 public class Main : Game
 {
+    public static bool DebugMode = false;
+
     // References
     public static GraphicsDeviceManager GraphicsDeviceManager;
     public static GraphicsDevice MainGraphicsDevice;

@@ -9,11 +9,23 @@ using System.IO;
 
 namespace TemplateGame;
 
+public enum SceneState
+{
+    Play, Pause
+}
+
  public abstract class Scene
 {
     public string Name { get; protected set; }
     public SceneCamera Camera { get; protected set; } = new SceneCamera();
-    public string SceneState { get; set; } = "Play";
+    public SceneState PlayState { get; set; } = SceneState.Play;
+    public bool DebugMode
+    {
+        get
+        {
+            return Main.DebugMode;
+        }
+    }
 
     private List<GameObject> gameObjects = new List<GameObject>();
     private IEnumerable<IGrouping<RenderLayer, GameObject>> drawCache = Enumerable.Empty<IGrouping<RenderLayer, GameObject>>();
@@ -78,6 +90,18 @@ namespace TemplateGame;
 
         gameObjects = gameObjects.OrderByDescending(g => g.Priority).ToList();
         drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
+    }
+
+    public T GetGameObject<T>() where T : GameObject
+    {
+        foreach (GameObject gameObject in gameObjects)
+        {
+            if (gameObject is T)
+            {
+                return (T)gameObject;
+            }
+        }
+        return null;
     }
 
     public virtual void Save()

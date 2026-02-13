@@ -5,7 +5,10 @@ namespace TemplateGame;
 public class Player : GameObject
 {
     private float movementSpeed = 40f;
+    private float debugCamSpeed = 4.5f;
+
     private Vector2 facingDirection = Vector2.Zero;
+
     private KeyboardState previousKeyboardState;
     public Player(Vector2 position) : base("player", () => new Player(Vector2.Zero), position)
     {
@@ -33,7 +36,38 @@ public class Player : GameObject
     {
         base.Update();
 
+        if (Main.DebugMode)
+        {
+            DebugFreeCam();
+            return;
+        }
+
         MovementController();
+    }
+
+    private void DebugFreeCam()
+    {
+        KeyboardState keyboardState = Keyboard.GetState();
+
+        if (keyboardState.IsKeyDown(Keys.W))
+        {
+            Main.SceneManager.CurrentScene.Camera.Translate(new Vector2(0, -debugCamSpeed));
+        }
+
+        if (keyboardState.IsKeyDown(Keys.S))
+        {
+            Main.SceneManager.CurrentScene.Camera.Translate(new Vector2(0, debugCamSpeed));
+        }
+
+        if (keyboardState.IsKeyDown(Keys.A))
+        {
+            Main.SceneManager.CurrentScene.Camera.Translate(new Vector2(-debugCamSpeed, 0));
+        }
+
+        if (keyboardState.IsKeyDown(Keys.D))
+        {
+            Main.SceneManager.CurrentScene.Camera.Translate(new Vector2(debugCamSpeed, 0));
+        }
     }
 
     private void MovementController()

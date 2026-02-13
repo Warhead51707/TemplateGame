@@ -25,13 +25,17 @@ public class SceneCamera
         float screenWidth = Main.GraphicsDeviceManager.GraphicsDevice.Viewport.Width;
         float screenHeight = Main.GraphicsDeviceManager.GraphicsDevice.Viewport.Height;
 
-        if (Vector2.Distance(Position, target.Position) > followSpeed * deadzoneMultiplier)
+        if (target != null)
         {
-            Vector2 roundedLerpPosition = Vector2.Round(Position * Zoom * 16) / (Zoom * 16);
-            Vector2 roundedLerpTargetPosition = Vector2.Round(target.Position * Zoom * 16) / (Zoom * 16);
-            float lerpAmount = 1.0f - (float)Math.Exp(-followSpeed * Main.DeltaTime);
+            if (Vector2.Distance(Position, target.Position) > followSpeed * deadzoneMultiplier)
+            {
+                Vector2 roundedLerpPosition = Vector2.Round(Position * Zoom * 16) / (Zoom * 16);
+                Vector2 roundedLerpTargetPosition = Vector2.Round(target.Position * Zoom * 16) / (Zoom * 16);
+                float lerpAmount = 1.0f - (float)Math.Exp(-followSpeed * Main.DeltaTime);
 
-            Position = Vector2.Lerp(roundedLerpPosition, roundedLerpTargetPosition, lerpAmount);
+                Position = Vector2.Lerp(roundedLerpPosition, roundedLerpTargetPosition, lerpAmount);
+            }
+
         }
 
         float roundedX = -MathF.Round(Position.X * Zoom * 16) / (Zoom * 16);
