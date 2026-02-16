@@ -53,6 +53,8 @@ public class DebugMainMenu : DebugUI
 
     public void SceneSettings()
     {
+        Scene currentScene = Main.SceneManager.CurrentScene;
+
         ImGui.Begin("Scene - Settings", ref sceneSettings);
 
         ImGui.Text("Settings:");
@@ -64,11 +66,12 @@ public class DebugMainMenu : DebugUI
             if (Main.DebugMode)
             {
                 Main.DebugMode = false;
-                Main.SceneManager.CurrentScene.Camera.SetTarget(Main.SceneManager.CurrentScene.GetGameObject<Player>());
+                currentScene.Camera.Zoom = currentScene.Camera.DefaultZoom;
+                currentScene.Camera.SetTarget(currentScene.GetGameObject<Player>());
             } else
             {
                 Main.DebugMode = true;
-                Main.SceneManager.CurrentScene.Camera.ResetTarget();
+                currentScene.Camera.ResetTarget();
             }
         }
 
@@ -77,13 +80,15 @@ public class DebugMainMenu : DebugUI
 
     public void SceneSaveLoad()
     {
+        Scene currentScene = Main.SceneManager.CurrentScene;
+
         ImGui.Begin("Scene - Save/Load", ref sceneSaveLoad);
 
         ImGui.Text("Save:");
 
         if (ImGui.Button("Save Scene"))
         {
-            Main.SceneManager.CurrentScene.Save();
+            currentScene.Save();
         }
 
         ImGui.End();

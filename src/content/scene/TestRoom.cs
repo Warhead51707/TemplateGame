@@ -9,6 +9,7 @@ public class TestRoom : Scene
 
     public override void Initialize()
     {
+        Camera.DefaultZoom = 4f;
         Camera.Zoom = 4f;
 
         Player player = new Player(Vector2.Zero);

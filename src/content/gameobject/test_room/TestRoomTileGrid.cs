@@ -14,9 +14,9 @@ public class TestRoomTileGrid : GameObject
 
         AddComponent(tileGrid);
 
-        for (int x = -6; x <= 6; x++)
+        for (int x = -60; x <= 60; x++)
         {
-            for (int y = -4; y <= 4; y++)
+            for (int y = -40; y <= 40; y++)
             {
                 Vector2 pos = new Vector2(x, y);
 

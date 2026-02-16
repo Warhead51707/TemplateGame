@@ -6,6 +6,7 @@ using System;
 namespace TemplateGame;
 public class SceneCamera
 {
+    public float DefaultZoom { get; set; } = 1.0f;
     public float Zoom { get; set; } = 1.0f;
     public Vector2 Position { get; set; } = Vector2.Zero;
     public Matrix Matrix { get; private set; } = Matrix.Identity;
