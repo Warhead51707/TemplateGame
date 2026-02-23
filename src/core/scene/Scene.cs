@@ -35,10 +35,17 @@ public enum SceneState
         Name = name;
     }
 
+    
+    public virtual Func<Scene> Register() { return null; }
+
     public virtual void Initialize() { }
 
     public virtual void Update()
     {
+        if (drawCache != gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order))
+        {
+            drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
+        }
         foreach (GameObject gameObject in gameObjects)
         {
             gameObject.Update();
@@ -124,4 +131,18 @@ public enum SceneState
 
         File.WriteAllText("Content/scene/" + Name + ".json", json);
     }
-}
+
+    public virtual void Load(SceneModel sceneSaveData)
+    {
+        gameObjects = new List<GameObject>();
+        drawCache = Enumerable.Empty<IGrouping<RenderLayer, GameObject>>();
+
+        foreach (SaveData gameObjectSaveData in sceneSaveData.gameObjectsSaveData)
+        {
+            GameObject gameObject = GameObjectRegistry.Create(gameObjectSaveData.Json["name"].GetString());
+            AddGameObject(gameObject);
+
+            gameObject.Load(gameObjectSaveData);
+        }
+    }
+ }

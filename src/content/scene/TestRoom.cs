@@ -1,23 +1,36 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace TemplateGame;
 public class TestRoom : Scene
 {
     public TestRoom() : base("test_room")
     {
+        Camera.DefaultZoom = 4f;
+        Camera.Zoom = 4f;
+    }
+
+    public override Func<Scene> Register()
+    {
+        return () => new TestRoom();
     }
 
     public override void Initialize()
     {
-        Camera.DefaultZoom = 4f;
-        Camera.Zoom = 4f;
-
         Player player = new Player(Vector2.Zero);
+
         TestRoomTileGrid tileGrid = new TestRoomTileGrid(Vector2.Zero);
 
         AddGameObject(player);
         AddGameObject(tileGrid);
 
         Camera.SetTarget(player);
+    }
+
+    public override void Load(SceneModel sceneSaveData)
+    {
+        base.Load(sceneSaveData);
+
+        if (!Main.DebugMode) Camera.SetTarget(GetGameObject<Player>());
     }
 }

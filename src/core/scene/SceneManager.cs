@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace TemplateGame;
@@ -28,6 +30,18 @@ public class SceneManager
     public void Draw()
     {
         CurrentScene.Draw();
+    }
+
+    public void LoadScene(string fileName)
+    {
+        string jsonFileContents = File.ReadAllText("Content/scene/" + fileName + ".json");
+        SceneModel sceneModel = JsonSerializer.Deserialize<SceneModel>(jsonFileContents);
+
+        Scene scene = SceneRegistry.Create(fileName);
+
+        scene.Load(sceneModel);
+
+        CurrentScene = scene;
     }
 }
 

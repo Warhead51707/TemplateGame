@@ -1,18 +1,34 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text.Json;
 
 namespace TemplateGame;
 public class TestRoomTileGrid : GameObject
 {
-    public TestRoomTileGrid(Vector2 position) : base("test_tile_grid", () => new TestRoomTileGrid(Vector2.Zero), position)
+    public TestRoomTileGrid(Vector2 position) : base("test_tile_grid", position)
     {
     }
 
-    public override void Initialize()
+    public override Func<GameObject> Register()
+    {
+        return () => new TestRoomTileGrid(Vector2.Zero);
+    }
+    public override void SetComponents()
     {
         TileGrid tileGrid = new TileGrid(this, new Vector2(16, 16));
 
         AddComponent(tileGrid);
+    }
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        Debug.Write("INIT");
+
+        TileGrid tileGrid = GetComponent<TileGrid>();
 
         for (int x = -60; x <= 60; x++)
         {
@@ -39,7 +55,36 @@ public class TestRoomTileGrid : GameObject
                 tileGrid.PlaceTile(pos, "snow_3");
             }
         }
+    }
 
-        base.Initialize();
+    public override void Load(SaveData saveData)
+    {
+        base.Load(saveData);
+
+        TileGrid tileGrid = GetComponent<TileGrid>();
+
+        tileGrid.Tiles.Clear();
+
+        if (saveData.Json.TryGetValue("components", out JsonElement components))
+        {
+            foreach (JsonElement component in components.EnumerateArray())
+            {
+                if (component.TryGetProperty("tiles", out JsonElement tiles))
+                {
+                    foreach (JsonElement tile in tiles.EnumerateArray())
+                    {
+                        string tileName = tile.GetProperty("name").GetString();
+
+                        JsonElement pos = tile.GetProperty("position");
+                        int x = pos.GetProperty("x").GetInt32();
+                        int y = pos.GetProperty("y").GetInt32();
+
+                        tileGrid.PlaceTile(new Vector2(x, y), tileName);
+
+                        //Debug.WriteLine(tileName + " " + x + ", " + y);
+                    }
+                }
+            }
+        }
     }
 }

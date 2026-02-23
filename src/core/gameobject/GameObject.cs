@@ -26,16 +26,17 @@ public abstract class GameObject
         RenderLayer = new RenderLayer(RenderSettings.Default, 0, null);
     }
 
-    public GameObject(string name, Func<GameObject> register, Vector2 position, int priority = 0)
+    public virtual Func<GameObject> Register() { return null; }
+
+    public virtual void SetComponents()
     {
-        Priority = priority;
-        Name = name;
-        Position = position;
-        RenderLayer = new RenderLayer(RenderSettings.Default, 0, null);
+
     }
 
     public virtual void Initialize()
     {
+        SetComponents();
+
         InitializeComponents();
     }
 

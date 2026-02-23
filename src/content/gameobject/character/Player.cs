@@ -14,24 +14,29 @@ public class Player : GameObject
     // Input
     private KeyboardState previousKeyboardState = Keyboard.GetState();
     private MouseState previousMouseState = Mouse.GetState();
-    public Player(Vector2 position) : base("player", () => new Player(Vector2.Zero), position)
+    public Player(Vector2 position) : base("player", position)
     {
     }
 
-    public override void Initialize()
+    public override Func<GameObject> Register()
     {
-        RenderLayer.Order = 1;
+        return () => new Player(Vector2.Zero);
+    }
 
-        //Sprite sprite = new Sprite(this, Name);
-        //AddComponent(sprite);
-
+    public override void SetComponents()
+    {
         AnimationTree animationTree = new AnimationTree(this);
-        animationTree.AddAnimation("player_idle_foward", _ => facingDirection == Vector2.Zero || facingDirection == new Vector2(0,1));
+        animationTree.AddAnimation("player_idle_foward", _ => facingDirection == Vector2.Zero || facingDirection == new Vector2(0, 1));
         animationTree.AddAnimation("player_idle_left", _ => facingDirection == new Vector2(-1, 0));
         animationTree.AddAnimation("player_idle_right", _ => facingDirection == new Vector2(1, 0));
         animationTree.AddAnimation("player_move_up", _ => facingDirection == new Vector2(0, -1));
 
         AddComponent(animationTree);
+    }
+
+    public override void Initialize()
+    {
+        RenderLayer.Order = 1;
 
         base.Initialize();
     }

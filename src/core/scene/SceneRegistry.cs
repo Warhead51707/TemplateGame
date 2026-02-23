@@ -5,18 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace TemplateGame;
-public static class GameObjectRegistry
-{
-    public static Dictionary<string, Func<GameObject>> registry = new Dictionary<string, Func<GameObject>>();
 
-    public static void Register(Func<GameObject> func)
+public static class SceneRegistry
+{
+    public static Dictionary<string, Func<Scene>> registry = new Dictionary<string, Func<Scene>>();
+
+    public static void Register(Func<Scene> func)
     {
         if (func == null || registry.ContainsValue(func)) return;
 
         registry.Add(func().Name, func);
     }
 
-    public static GameObject Create(string name)
+    public static Scene Create(string name)
     {
         if (registry.ContainsKey(name))
         {
@@ -26,3 +27,5 @@ public static class GameObjectRegistry
         return null;
     }
 }
+
+
