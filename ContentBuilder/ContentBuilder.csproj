@@ -19,6 +19,7 @@
     <PackageReference Include="MonoGame.Tool.FFprobe" Version="7.0.0.9" />      
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Assets\tiles\" />
     <Folder Include="Assets\scene\" />
   </ItemGroup>
   <Target Name="Run">

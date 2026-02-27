@@ -7,7 +7,14 @@ namespace TemplateGame;
 
 public class DebugMainMenu : DebugUI
 {
-    // Windows
+    // Editor Windows
+    public bool tilemapEditor = false;
+
+    // Tilemap editor
+    public string[] tiles = null;
+    public int selectedTileIndex = 0;
+
+    // Scene Windows
     public bool sceneSaveLoad = false;
     public bool sceneSettings = false;
 
@@ -18,6 +25,11 @@ public class DebugMainMenu : DebugUI
     public override void Draw()
     {
         MenuBar();
+
+        if (tilemapEditor)
+        {
+            TileMapEditor();
+        }
 
         if (sceneSettings)
         {
@@ -34,9 +46,12 @@ public class DebugMainMenu : DebugUI
     {
         if (ImGui.BeginMainMenuBar())
         {
-            if (ImGui.BeginMenu("Engine"))
+            if (ImGui.BeginMenu("Editor"))
             {
-
+                if (ImGui.MenuItem("Tilemap Editor"))
+                {
+                    tilemapEditor = true;
+                }
                 ImGui.EndMenu();
             }
 
@@ -59,28 +74,57 @@ public class DebugMainMenu : DebugUI
         }
     }
 
+    public void TileMapEditor()
+    {
+        Scene currentScene = Main.SceneManager.CurrentScene;
+        PlayerDebugTools playerDebugTools = currentScene.GetGameObject<Player>().GetComponent<PlayerDebugTools>();
+
+        if (tiles == null)
+        {
+            string contentPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/tiles");
+
+            if (Directory.Exists(contentPath))
+            {
+                string[] fileNames = Directory.GetFiles(contentPath, "*.png").Select(Path.GetFileNameWithoutExtension).ToArray();
+
+                scenesToLoad = fileNames;
+            }
+        }
+
+        ImGui.Begin("Tilemap Editor", ref tilemapEditor);
+
+        if (ImGui.Button("Toggle Tilemap Editor"))
+        {
+            playerDebugTools.ToggleTilemapEditor();
+        }
+
+        ImGui.Text("Tilemap Editor - " + (playerDebugTools.tilemapEditorEnabled ? "Enabled" : "Disabled"));
+
+        ImGui.Text("Tiles:");
+        ImGui.Combo("", ref selectedTileIndex, tiles, tiles.Length);
+    }
+
     public void SceneSettings()
     {
         Scene currentScene = Main.SceneManager.CurrentScene;
+        PlayerDebugTools playerDebugTools = currentScene.GetGameObject<Player>().GetComponent<PlayerDebugTools>();
 
         ImGui.Begin("Scene - Settings", ref sceneSettings);
 
         ImGui.Text("Settings:");
 
-        ImGui.Text("Debug Mode - " + Main.DebugMode);
-
-        if (ImGui.Button("Toggle Debug Mode"))
+        if (ImGui.Button("Toggle Free Cam"))
         {
-            if (Main.DebugMode)
+            if (playerDebugTools.debugCamEnabled)
             {
-                Main.DebugMode = false;
                 currentScene.Camera.Zoom = currentScene.Camera.DefaultZoom;
                 currentScene.Camera.SetTarget(currentScene.GetGameObject<Player>());
             } else
             {
-                Main.DebugMode = true;
                 currentScene.Camera.ResetTarget();
             }
+
+            playerDebugTools.ToggleDebugCam();
         }
 
         ImGui.End();

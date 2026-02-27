@@ -48,6 +48,13 @@ public class Main : Game
         // Debug UI
         ImGuiManager = new ImGuiManager(this);
 
+        #if DEBUG
+
+        // Debug Mode
+        DebugMode = true;
+
+        #endif
+
         base.Initialize();
     }
 
@@ -84,9 +91,11 @@ public class Main : Game
 
         SceneManager.Draw();
 
-#if DEBUG
+        #if DEBUG
+
         ImGuiManager.Draw();
-#endif
+
+        #endif
 
         base.Draw(gameTime);
     }
