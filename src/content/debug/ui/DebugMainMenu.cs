@@ -85,23 +85,38 @@ public class DebugMainMenu : DebugUI
 
             if (Directory.Exists(contentPath))
             {
-                string[] fileNames = Directory.GetFiles(contentPath, "*.png").Select(Path.GetFileNameWithoutExtension).ToArray();
+                string[] fileNames = Directory.GetFiles(contentPath, "*.xnb").Select(Path.GetFileNameWithoutExtension).ToArray();
 
-                scenesToLoad = fileNames;
+                tiles = fileNames;
             }
         }
 
         ImGui.Begin("Tilemap Editor", ref tilemapEditor);
 
+        ImGui.Text("Tilemap Editor - " + (playerDebugTools.tilemapEditorEnabled ? "Enabled" : "Disabled"));
+
         if (ImGui.Button("Toggle Tilemap Editor"))
         {
             playerDebugTools.ToggleTilemapEditor();
+
+            if (playerDebugTools.tilemapEditorEnabled)
+            {
+                TilePlacer tilePlacer = new TilePlacer(tiles[selectedTileIndex]);
+                currentScene.AddGameObject(tilePlacer);
+            } else
+            {
+                GameObject tilePlacer = currentScene.GetGameObject<TilePlacer>();
+                if (tilePlacer != null)
+                {
+                    currentScene.RemoveGameObject(tilePlacer);
+                }
+            }
         }
 
-        ImGui.Text("Tilemap Editor - " + (playerDebugTools.tilemapEditorEnabled ? "Enabled" : "Disabled"));
-
         ImGui.Text("Tiles:");
-        ImGui.Combo("", ref selectedTileIndex, tiles, tiles.Length);
+        ImGui.Combo(tiles.Length + " Tiles Loaded", ref selectedTileIndex, tiles, tiles.Length);
+
+        ImGui.End();
     }
 
     public void SceneSettings()

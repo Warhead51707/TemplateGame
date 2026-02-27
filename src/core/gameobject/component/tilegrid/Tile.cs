@@ -14,7 +14,7 @@ public class Tile
     {
         TileGrid = tileGrid;
         Name = name;
-        Texture = Main.ContentManager.Load<Texture2D>(name);
+        Texture = Main.ContentManager.Load<Texture2D>("tiles/" + name);
     }
 
     public void Draw()

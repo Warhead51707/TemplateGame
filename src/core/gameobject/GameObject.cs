@@ -96,6 +96,11 @@ public abstract class GameObject
     {
         return Components.FirstOrDefault(component => component is T) as T;
     }
+
+    public void Destroy()
+    {
+        Main.SceneManager.CurrentScene.RemoveGameObject(this);
+    }
     private void InitializeComponents()
     {
         foreach (Component component in Components)

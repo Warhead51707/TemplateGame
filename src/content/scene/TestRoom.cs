@@ -31,6 +31,9 @@ public class TestRoom : Scene
     {
         base.Load(sceneSaveData);
 
-        if (!Main.DebugMode) Camera.SetTarget(GetGameObject<Player>());
+        Player player = GetGameObject<Player>();
+        PlayerDebugTools playerDebugTools = player.GetComponent<PlayerDebugTools>();
+
+        if (!playerDebugTools.debugCamEnabled) Camera.SetTarget(player);
     }
 }

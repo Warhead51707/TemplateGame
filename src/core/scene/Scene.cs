@@ -99,6 +99,12 @@ public enum SceneState
         drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
     }
 
+    public void RemoveGameObject(GameObject gameObject)
+    {
+        gameObjects.Remove(gameObject);
+        drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
+    }
+
     public T GetGameObject<T>() where T : GameObject
     {
         foreach (GameObject gameObject in gameObjects)
