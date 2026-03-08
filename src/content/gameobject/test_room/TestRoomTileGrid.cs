@@ -7,14 +7,10 @@ using System.Text.Json;
 namespace TemplateGame;
 public class TestRoomTileGrid : GameObject
 {
-    public TestRoomTileGrid(Vector2 position) : base("test_tile_grid", position)
+    public TestRoomTileGrid(Vector2 position) : base("test_tile_grid", position, () => new TestRoomTileGrid(Vector2.Zero))
     {
     }
 
-    public override Func<GameObject> Register()
-    {
-        return () => new TestRoomTileGrid(Vector2.Zero);
-    }
     public override void SetComponents()
     {
         TileGrid tileGrid = new TileGrid(this, new Vector2(16, 16));
@@ -26,8 +22,6 @@ public class TestRoomTileGrid : GameObject
     {
         base.Initialize();
 
-        Debug.Write("INIT");
-
         TileGrid tileGrid = GetComponent<TileGrid>();
 
         for (int x = -60; x <= 60; x++)
@@ -35,6 +29,12 @@ public class TestRoomTileGrid : GameObject
             for (int y = -40; y <= 40; y++)
             {
                 Vector2 pos = new Vector2(x, y);
+
+                if (pos == new Vector2(-2, -2))
+                {
+                    tileGrid.PlaceTile(pos, "test_collision_tile");
+                    continue;
+                }
 
                 Random random = new Random();
 
@@ -62,8 +62,6 @@ public class TestRoomTileGrid : GameObject
         base.Load(saveData);
 
         TileGrid tileGrid = GetComponent<TileGrid>();
-
-        tileGrid.Tiles.Clear();
 
         if (saveData.Json.TryGetValue("components", out JsonElement components))
         {

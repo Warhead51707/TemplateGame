@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ImGuiNET;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,8 @@ public class PlayerDebugTools : Component
 
     private void DebugFreeCam()
     {
+        if (ImGui.GetIO().WantCaptureKeyboard) return;
+
         KeyboardState keyboardState = Keyboard.GetState();
         MouseState mouseState = Mouse.GetState();
 
@@ -74,7 +77,7 @@ public class PlayerDebugTools : Component
         // Camera Zoom
         int scrollChange = mouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue;
 
-        if (scrollChange != 0)
+        if (scrollChange != 0 && !ImGui.GetIO().WantCaptureMouse)
         {
             float zoomAmount = 0.008f * scrollChange;
             float zoomTotal = Main.SceneManager.CurrentScene.Camera.Zoom + zoomAmount;

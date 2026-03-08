@@ -18,6 +18,10 @@ public class DebugMainMenu : DebugUI
     public bool sceneSaveLoad = false;
     public bool sceneSettings = false;
 
+    // Scene Saving
+    public string sceneSaveName = "new_scene";
+    public uint maxSceneSaveNameLength = 100;
+
     // Scene Loading
     public string[] scenesToLoad = null;
     public int selectedSceneIndex = 0;
@@ -81,11 +85,11 @@ public class DebugMainMenu : DebugUI
 
         if (tiles == null)
         {
-            string contentPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/tiles");
+            string contentPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/data/tile");
 
             if (Directory.Exists(contentPath))
             {
-                string[] fileNames = Directory.GetFiles(contentPath, "*.xnb").Select(Path.GetFileNameWithoutExtension).ToArray();
+                string[] fileNames = Directory.GetFiles(contentPath, "*.json").Select(Path.GetFileNameWithoutExtension).ToArray();
 
                 tiles = fileNames;
             }
@@ -108,13 +112,25 @@ public class DebugMainMenu : DebugUI
                 GameObject tilePlacer = currentScene.GetGameObject<TilePlacer>();
                 if (tilePlacer != null)
                 {
-                    currentScene.RemoveGameObject(tilePlacer);
+                    currentScene.RemoveAllGameObjects<TilePlacer>();
                 }
             }
         }
 
         ImGui.Text("Tiles:");
-        ImGui.Combo(tiles.Length + " Tiles Loaded", ref selectedTileIndex, tiles, tiles.Length);
+        if (ImGui.Combo(tiles.Length + " Tiles Loaded", ref selectedTileIndex, tiles, tiles.Length) && playerDebugTools.tilemapEditorEnabled)
+        {
+            GameObject tilePlacer = currentScene.GetGameObject<TilePlacer>();
+
+            if (tilePlacer != null)
+            {
+                currentScene.RemoveAllGameObjects<TilePlacer>();
+            }
+
+            tilePlacer = new TilePlacer(tiles[selectedTileIndex]);
+            currentScene.AddGameObject(tilePlacer);
+
+        }
 
         ImGui.End();
     }
@@ -142,21 +158,35 @@ public class DebugMainMenu : DebugUI
             playerDebugTools.ToggleDebugCam();
         }
 
+        if (ImGui.Button("Toggle Collision Box Visibility"))
+        {
+            foreach (Collider collider in currentScene.GetGameObjectComponents<Collider>())
+            {
+                collider.ShowCollisionBox();
+            }
+
+            foreach (TileGrid tileGrid in currentScene.GetGameObjectComponents<TileGrid>())
+            {
+                foreach (CollisionTile collisionTile in tileGrid.GetCollisionTiles())
+                {
+                    collisionTile.ShowCollisionBox();
+                }
+            }
+
+        } 
+
         ImGui.End();
     }
 
     public void SceneSaveLoad()
     {
-        if (scenesToLoad == null)
+        string contentPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/data/scene");
+
+        if (Directory.Exists(contentPath))
         {
-            string contentPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/scene");
+            string[] fileNames = Directory.GetFiles(contentPath, "*.json").Select(Path.GetFileNameWithoutExtension).ToArray();
 
-            if (Directory.Exists(contentPath))
-            {
-                string[] fileNames = Directory.GetFiles(contentPath, "*.json").Select(Path.GetFileNameWithoutExtension).ToArray();
-
-                scenesToLoad = fileNames;
-            }
+            scenesToLoad = fileNames;
         }
 
         Scene currentScene = Main.SceneManager.CurrentScene;
@@ -165,18 +195,23 @@ public class DebugMainMenu : DebugUI
 
         ImGui.Text("Save:");
 
+        ImGui.InputText("File Name", ref sceneSaveName, maxSceneSaveNameLength);
+
         if (ImGui.Button("Save Scene"))
         {
-            currentScene.Save();
+            currentScene.Save(sceneSaveName);
         }
 
-        ImGui.Text("Load:");
-
-        ImGui.Combo("Scenes", ref selectedSceneIndex, scenesToLoad, scenesToLoad.Length);
-
-        if (ImGui.Button("Load Scene"))
+        if (scenesToLoad != null && scenesToLoad.Length > 0)
         {
-            Main.SceneManager.LoadScene(scenesToLoad[selectedSceneIndex]);
+            ImGui.Text("Load:");
+
+            ImGui.Combo("Scenes", ref selectedSceneIndex, scenesToLoad, scenesToLoad.Length);
+
+            if (ImGui.Button("Load Scene"))
+            {
+                Main.SceneManager.LoadScene(scenesToLoad[selectedSceneIndex]);
+            }
         }
 
         ImGui.End();

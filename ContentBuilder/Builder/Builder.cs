@@ -14,7 +14,7 @@ var contentCollectionArgs = new ContentBuilderParams()
 {
     Mode = ContentBuilderMode.Builder,
     WorkingDirectory = $"{AppContext.BaseDirectory}../../../", // path to where your content folder can be located
-    SourceDirectory = "Assets", // Not actually needed as this is the default, but added for reference
+    SourceDirectory = "Content", // Not actually needed as this is the default, but added for reference
     Platform = TargetPlatform.DesktopGL
 };
 var builder = new Builder();
@@ -38,7 +38,9 @@ public class Builder : ContentBuilder
 
         // include everything in the folder
         contentCollection.Include<WildcardRule>("*");
-        contentCollection.IncludeCopy<WildcardRule>("animation/*.json");
+        contentCollection.IncludeCopy<WildcardRule>("data/animation/*.json");
+        contentCollection.IncludeCopy<WildcardRule>("data/tile/*.json");
+        contentCollection.IncludeCopy<WildcardRule>("data/scene/*.json");
 
         // By default, all content will be imported from the Assets folder using the default importer for their file type.
         // Please add any custom content collection rules here.

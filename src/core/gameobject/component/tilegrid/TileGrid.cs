@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -12,10 +14,31 @@ public class TileGrid : Component
     public RenderLayer RenderLayer { get; protected set; }
     public Vector2 TileSize { get; protected set; }
 
+    private List<CollisionTile> collisionTileCache = new List<CollisionTile>();
+
     public TileGrid(GameObject parent, Vector2 tileSize) : base("tilegrid", parent)
     {
         RenderLayer = RenderLayers.Default;
         TileSize = tileSize;
+    }
+
+    public List<Rectangle> GetCollisionBoxes()
+    {
+        List<Rectangle> collisionBoxes = new List<Rectangle>();
+
+        foreach (CollisionTile tile in collisionTileCache)
+        {
+            collisionBoxes.Add(tile.collisionBox);
+
+           // Debug.WriteLine("Collision box for tile at " + tile.GridPosition + ": " + tile.collisionBox);
+        }
+
+        return collisionBoxes;
+    }
+
+    public List<CollisionTile> GetCollisionTiles()
+    {
+        return collisionTileCache;
     }
 
     public override SaveData Save()
@@ -33,13 +56,45 @@ public class TileGrid : Component
         return base.Save();
     }
 
+    public override void Load(SaveData saveData)
+    {
+        base.Load(saveData);
+
+        Tiles.Clear();
+        collisionTileCache.Clear();
+    }
+
     public void PlaceTile(Vector2 gridPosition, string name)
     {
-        Tile tile = new Tile(this, name);
+        string jsonFileContents = File.ReadAllText("Content/data/tile/" + name + ".json");
+        TileModel tileModel = JsonSerializer.Deserialize<TileModel>(jsonFileContents);
+
+        if (tileModel == null) {
+            Console.WriteLine("Failed to load tile: " + name);
+            return;
+        }
+
+        Tile tile = new Tile(this, tileModel);
+
+        bool hasCollision = tileModel.Collision != null;
+
+        if (hasCollision)
+        {
+            tile = new CollisionTile(this, tileModel);
+        }
 
         if (tile == null) return;
 
         tile.GridPosition = gridPosition;
+
+        if (hasCollision)
+        {
+            collisionTileCache.Add((CollisionTile)tile);
+
+            Debug.WriteLine("Added collision tile at " + gridPosition + " with collision box: " + ((CollisionTile)tile).collisionBox);
+        }
+
+        tile.OnPlace();
 
         if (Tiles.ContainsKey(gridPosition))
         {

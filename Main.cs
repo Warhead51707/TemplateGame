@@ -68,9 +68,6 @@ public class Main : Game
 
         // Set Scene
         TestRoom testRoom = new TestRoom();
-        SceneRegistry.Register(() => new TestRoom());
-        GameObjectRegistry.Register(() => new TestRoomTileGrid(Vector2.Zero));
-        GameObjectRegistry.Register(() => new Player(Vector2.Zero));
 
         SceneManager.SetCurrentScene(testRoom);
     }

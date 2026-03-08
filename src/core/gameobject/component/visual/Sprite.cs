@@ -19,7 +19,7 @@ public class Sprite : Component
 
     public Sprite(GameObject parent, string path) : base("sprite", parent)
     {
-        Texture = Main.ContentManager.Load<Texture2D>(path);
+        Texture = Main.ContentManager.Load<Texture2D>("assets/" + path);
         Size = new Vector2(Texture.Width, Texture.Height);
     }
 

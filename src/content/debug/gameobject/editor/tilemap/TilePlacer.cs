@@ -1,28 +1,40 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ImGuiNET;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SharpDX.Direct3D9;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace TemplateGame;
 
 public class TilePlacer : GameObject
 {
+    private TileModel tileModel;
     private string tileName;
+
     private float blinkTimer = 0f;
     private MouseState previousMouseState = Mouse.GetState();
+
     public TilePlacer(string tileName) : base("tile_placer", Vector2.Zero)
     {
+        string jsonFileContents = File.ReadAllText("Content/data/tile/" + tileName + ".json");
+        TileModel tileModel = JsonSerializer.Deserialize<TileModel>(jsonFileContents);
+
+        this.tileModel = tileModel;
+
         this.tileName = tileName;
         RenderLayer.Order = 100;
     }
 
     public override void SetComponents()
     {
-        Sprite sprite = new Sprite(this, "tiles/" + tileName);
+        Sprite sprite = new Sprite(this, "tile/" + tileModel.Texture);
         
         AddComponent(sprite);
     }
@@ -50,7 +62,7 @@ public class TilePlacer : GameObject
 
         sprite.Color = Color.Lerp(startColor, endColor, lerpTime);
 
-        if (mouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released)
+        if (mouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released && !ImGui.GetIO().WantCaptureMouse)
         {
             TileGrid tileGrid = Main.SceneManager.CurrentScene.GetGameObject<TestRoomTileGrid>().GetComponent<TileGrid>();
 
@@ -58,5 +70,10 @@ public class TilePlacer : GameObject
         }
 
         previousMouseState = mouseState;
+    }
+
+    public override SaveData Save()
+    {
+        return SaveData;
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace TemplateGame;
@@ -9,15 +11,22 @@ public class Tile
     public Texture2D Texture { get; private set; }
     public TileGrid TileGrid { get; private set; }
     public Vector2 GridPosition { get; set; } = Vector2.Zero;
+    protected TileModel tileModel { get; private set; }
 
-    public Tile(TileGrid tileGrid, string name)
+    public Tile(TileGrid tileGrid, TileModel tileModel)
     {
+        this.tileModel = tileModel;
         TileGrid = tileGrid;
-        Name = name;
-        Texture = Main.ContentManager.Load<Texture2D>("tiles/" + name);
+        Name = tileModel.Name;
+        Texture = Main.ContentManager.Load<Texture2D>("assets/tile/" + tileModel.Texture);
     }
 
-    public void Draw()
+    public virtual void OnPlace()
+    {
+
+    }
+
+    public virtual void Draw()
     {
         Vector2 gridPosition = new Vector2(TileGrid.Parent.Position.X + (GridPosition.X * TileGrid.TileSize.X), TileGrid.Parent.Position.Y + (GridPosition.Y * TileGrid.TileSize.Y));
 

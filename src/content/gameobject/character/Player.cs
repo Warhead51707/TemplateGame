@@ -1,6 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ImGuiNET;
+using Microsoft.VisualBasic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Diagnostics;
 
 namespace TemplateGame;
 public class Player : GameObject
@@ -12,14 +15,10 @@ public class Player : GameObject
 
     // Input
     private KeyboardState previousKeyboardState = Keyboard.GetState();
+    private int count = 0;
     
-    public Player(Vector2 position) : base("player", position)
+    public Player(Vector2 position) : base("player", position, () => new Player(Vector2.Zero))
     {
-    }
-
-    public override Func<GameObject> Register()
-    {
-        return () => new Player(Vector2.Zero);
     }
 
     public override void SetComponents()
@@ -35,6 +34,10 @@ public class Player : GameObject
         PlayerDebugTools playerDebugTools = new PlayerDebugTools(this);
 
         AddComponent(playerDebugTools);
+
+        Collider collider = new Collider(this, new Rectangle(-4, -5, 8, 12));
+
+        AddComponent(collider);
     }
 
     public override void Initialize()
@@ -54,6 +57,7 @@ public class Player : GameObject
     private void MovementController()
     {
         if (GetComponent<PlayerDebugTools>().debugCamEnabled) return;
+        if (ImGui.GetIO().WantCaptureKeyboard) return;
 
         KeyboardState keyboardState = Keyboard.GetState();
 
@@ -73,6 +77,22 @@ public class Player : GameObject
         facingDirection = movementDirection;
 
         movementDirection.Normalize();
+
+        Collider collider = GetComponent<Collider>();
+
+        collider.MovementOffset = facingDirection;
+
+        collider.CheckColliding();
+
+        if (collider.IsColliding)
+        {
+            Rectangle overlapRectangle = collider.OverlapRectangle;
+
+            if (overlapRectangle.Width > 0) movementDirection.X = 0;
+            if (overlapRectangle.Height > 0) movementDirection.Y = 0;
+
+            return;
+        }
 
         Position += movementDirection * movementSpeed * Main.DeltaTime;
     }

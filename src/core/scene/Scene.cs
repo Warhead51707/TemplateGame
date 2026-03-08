@@ -29,16 +29,32 @@ public enum SceneState
 
     private List<GameObject> gameObjects = new List<GameObject>();
     private IEnumerable<IGrouping<RenderLayer, GameObject>> drawCache = Enumerable.Empty<IGrouping<RenderLayer, GameObject>>();
+    private Func<Scene> registerFunc;
 
     public Scene(string name)
     {
         Name = name;
     }
 
-    
-    public virtual Func<Scene> Register() { return null; }
+    public Scene(string name, Func<Scene> register)
+    {
+        Name = name;
+        registerFunc = register;
+    }
 
-    public virtual void Initialize() { }
+
+    protected void Register(Func<Scene> register)
+    {
+        SceneRegistry.Register(register);
+    }
+
+    public virtual void Initialize()
+    {
+        if (registerFunc != null)
+        {
+            Register(registerFunc);
+        }
+    }
 
     public virtual void Update()
     {
@@ -105,6 +121,12 @@ public enum SceneState
         drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
     }
 
+    public void RemoveAllGameObjects<T>() where T : GameObject
+    {
+        gameObjects.RemoveAll(g => g is T);
+        drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
+    }
+
     public T GetGameObject<T>() where T : GameObject
     {
         foreach (GameObject gameObject in gameObjects)
@@ -117,8 +139,42 @@ public enum SceneState
         return null;
     }
 
-    public virtual void Save()
+    public List<GameObject> GetGameObjectsWithComponent<T>() where T : Component
     {
+        List<GameObject> result = new List<GameObject>();
+
+        foreach (GameObject gameObject in gameObjects)
+        {
+            if (gameObject.GetComponent<T>() != null)
+            {
+                result.Add(gameObject);
+            }
+        }
+
+        return result;
+    }
+
+    public List<Component> GetGameObjectComponents<T>() where T : Component
+    {
+        List<Component> result = new List<Component>();
+
+        foreach (GameObject gameObject in gameObjects)
+        {
+            Component component = gameObject.GetComponent<T>();
+
+            if (component != null)
+            {
+                result.Add(component);
+            }
+        }
+
+        return result;
+    }
+
+    public virtual void Save(string fileName = null)
+    {
+        if (string.IsNullOrEmpty(fileName)) fileName = Name;
+
         List<SaveData> saveData = new List<SaveData>();
 
         foreach (GameObject gameObject in gameObjects)
@@ -126,7 +182,7 @@ public enum SceneState
             saveData.Add(gameObject.Save());
         }
 
-        SceneModel model = new SceneModel(saveData);
+        SceneModel model = new SceneModel(Name, saveData);
 
         JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions()
         {
@@ -135,7 +191,7 @@ public enum SceneState
 
         string json = JsonSerializer.Serialize(model, jsonSerializerOptions);
 
-        File.WriteAllText("Content/scene/" + Name + ".json", json);
+        File.WriteAllText("Content/data/scene/" + fileName + ".json", json);
     }
 
     public virtual void Load(SceneModel sceneSaveData)

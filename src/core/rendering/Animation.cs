@@ -21,7 +21,7 @@ public class Animation
 
     public Animation(GameObject parent, string path)
     {
-        string jsonFileContents = File.ReadAllText("Content/animation/" + path + ".json");
+        string jsonFileContents = File.ReadAllText("Content/data/animation/" + path + ".json");
         AnimationModel animationModel = JsonSerializer.Deserialize<AnimationModel>(jsonFileContents);
 
         Sprite = new Sprite(parent, animationModel.SpriteSheet);

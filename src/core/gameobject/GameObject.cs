@@ -18,6 +18,8 @@ public abstract class GameObject
     public SaveData SaveData { get; set; } = new SaveData();
     public bool IsDirty { get; set; } = false;
 
+    private Func<GameObject> registerFunc;
+
     public GameObject(string name, Vector2 position, int priority = 0)
     {
         Priority = priority;
@@ -26,7 +28,19 @@ public abstract class GameObject
         RenderLayer = new RenderLayer(RenderSettings.Default, 0, null);
     }
 
-    public virtual Func<GameObject> Register() { return null; }
+    public GameObject(string name, Vector2 position, Func<GameObject> register, int priority = 0)
+    {
+        Priority = priority;
+        Name = name;
+        Position = position;
+        RenderLayer = new RenderLayer(RenderSettings.Default, 0, null);
+        registerFunc = register;
+    }
+
+    protected void Register(Func<GameObject> func)
+    {
+        GameObjectRegistry.Register(func);
+    }
 
     public virtual void SetComponents()
     {
@@ -38,6 +52,11 @@ public abstract class GameObject
         SetComponents();
 
         InitializeComponents();
+
+        if (registerFunc != null)
+        {
+            Register(registerFunc);
+        }
     }
 
     public virtual void Update()
@@ -80,6 +99,11 @@ public abstract class GameObject
     public virtual void Load(SaveData saveData)
     {
         SaveData = saveData;
+
+        foreach (Component component in Components)
+        {
+            component.Load(saveData);
+        }
     }
 
     public void AddComponent(Component component)

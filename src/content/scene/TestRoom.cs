@@ -4,15 +4,10 @@ using System;
 namespace TemplateGame;
 public class TestRoom : Scene
 {
-    public TestRoom() : base("test_room")
+    public TestRoom() : base("test_room", () => new TestRoom())
     {
         Camera.DefaultZoom = 4f;
         Camera.Zoom = 4f;
-    }
-
-    public override Func<Scene> Register()
-    {
-        return () => new TestRoom();
     }
 
     public override void Initialize()
@@ -25,6 +20,8 @@ public class TestRoom : Scene
         AddGameObject(tileGrid);
 
         Camera.SetTarget(player);
+
+        base.Initialize();
     }
 
     public override void Load(SceneModel sceneSaveData)

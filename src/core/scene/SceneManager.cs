@@ -34,10 +34,10 @@ public class SceneManager
 
     public void LoadScene(string fileName)
     {
-        string jsonFileContents = File.ReadAllText("Content/scene/" + fileName + ".json");
+        string jsonFileContents = File.ReadAllText("Content/data/scene/" + fileName + ".json");
         SceneModel sceneModel = JsonSerializer.Deserialize<SceneModel>(jsonFileContents);
 
-        Scene scene = SceneRegistry.Create(fileName);
+        Scene scene = SceneRegistry.Create(sceneModel.internalName);
 
         scene.Load(sceneModel);
 
