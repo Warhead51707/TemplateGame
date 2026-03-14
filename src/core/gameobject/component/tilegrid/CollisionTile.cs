@@ -13,15 +13,10 @@ public class CollisionTile : Tile
 {
     public Rectangle collisionBox = Rectangle.Empty;
 
-    private bool showCollisionBox { get; set; } = false;
+    private Color collisionBoxColor = new Color(Color.Red, 0.3f);
     public CollisionTile(TileGrid tileGrid, TileModel tileModel) : base(tileGrid, tileModel)
     {
         
-    }
-
-    public void ShowCollisionBox()
-    {
-        showCollisionBox = !showCollisionBox;
     }
 
     public override void OnPlace()
@@ -33,11 +28,11 @@ public class CollisionTile : Tile
     {
         base.Draw();
 
-        if (!showCollisionBox) return;
+        if (!DebugToggles.ShowColliders) return;
 
         Vector2 boxPosition = new Vector2(TileGrid.Parent.Position.X + (GridPosition.X * TileGrid.TileSize.X) + tileModel.Collision.Offset.X, TileGrid.Parent.Position.Y + (GridPosition.Y * TileGrid.TileSize.Y) + tileModel.Collision.Offset.Y);
         Rectangle destination = new Rectangle((int)boxPosition.X, (int)boxPosition.Y, tileModel.Collision.Size.Width, tileModel.Collision.Size.Height);
 
-        DrawManager.SpriteBatch.Draw(DrawManager.Pixel, destination, null, Color.Red * 0.7f, 0f, Vector2.Zero, SpriteEffects.None, 0.0001f);
+        DrawManager.SpriteBatch.Draw(DrawManager.Pixel, destination, null, collisionBoxColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0001f);
     }
 }

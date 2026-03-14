@@ -111,6 +111,11 @@ public abstract class GameObject
         Components.Add(component);
     }
 
+    public void AddComponents(params Component[] components)
+    {
+        Components.AddRange(components);
+    }
+
     public void RemoveComponent(Component component)
     {
         Components.Remove(component);

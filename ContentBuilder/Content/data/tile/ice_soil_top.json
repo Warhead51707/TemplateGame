@@ -1,0 +1,14 @@
+{
+  "name": "ice_soil_top",
+  "texture": "ice_soil_top",
+  "collision": {
+    "size": {
+      "width": 16,
+      "height": 4
+    },
+    "offset": {
+      "x": -8,
+      "y": 0
+    }
+  }
+}

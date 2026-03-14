@@ -15,7 +15,6 @@ public class Player : GameObject
 
     // Input
     private KeyboardState previousKeyboardState = Keyboard.GetState();
-    private int count = 0;
     
     public Player(Vector2 position) : base("player", position, () => new Player(Vector2.Zero))
     {
@@ -29,15 +28,11 @@ public class Player : GameObject
         animationTree.AddAnimation("player_idle_right", _ => facingDirection == new Vector2(1, 0));
         animationTree.AddAnimation("player_move_up", _ => facingDirection == new Vector2(0, -1));
 
-        AddComponent(animationTree);
-
         PlayerDebugTools playerDebugTools = new PlayerDebugTools(this);
-
-        AddComponent(playerDebugTools);
 
         Collider collider = new Collider(this, new Rectangle(-4, -5, 8, 12));
 
-        AddComponent(collider);
+        AddComponents(animationTree, playerDebugTools, collider);
     }
 
     public override void Initialize()
@@ -51,7 +46,26 @@ public class Player : GameObject
     {
         base.Update();
 
+        SnowballController();
+
         MovementController();
+    }
+
+    private void SnowballController()
+    {
+        if (GetComponent<PlayerDebugTools>().debugCamEnabled) return;
+
+        KeyboardState keyboardState = Keyboard.GetState();
+
+        if (keyboardState.IsKeyDown(Keys.Space) && !previousKeyboardState.IsKeyDown(Keys.Space))
+        {
+            Vector2 snowballDirection = facingDirection;
+
+            if (facingDirection == Vector2.Zero) snowballDirection = new Vector2(0, 1);
+
+            Snowball snowball = new Snowball(Position, snowballDirection);
+            Main.SceneManager.CurrentScene.AddGameObject(snowball);
+        }
     }
 
     private void MovementController()
@@ -70,15 +84,26 @@ public class Player : GameObject
 
         if (previousKeyboardState.IsKeyDown(Keys.W) && movementDirection == Vector2.Zero) facingDirection = Vector2.Zero;
 
-        if (movementDirection.X == 0 && movementDirection.Y == 0) return;
+        Collider collider = GetComponent<Collider>();
+
+        if (collider.IsColliding)
+        {
+            Rectangle overlapRectangle = collider.OverlapRectangle;
+
+            if (overlapRectangle.Width > 1 && overlapRectangle.Height > 1)
+            {
+                Position += new Vector2(overlapRectangle.Width, overlapRectangle.Height);
+                return;
+            }
+        }
 
         previousKeyboardState = keyboardState;
+
+        if (movementDirection.X == 0 && movementDirection.Y == 0) return;
 
         facingDirection = movementDirection;
 
         movementDirection.Normalize();
-
-        Collider collider = GetComponent<Collider>();
 
         collider.MovementOffset = facingDirection;
 

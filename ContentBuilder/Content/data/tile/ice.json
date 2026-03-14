@@ -1,0 +1,14 @@
+{
+  "name": "ice",
+  "texture": "ice",
+  "collision": {
+    "size": {
+      "width": 16,
+      "height": 16
+    },
+    "offset": {
+      "x": -8,
+      "y": -8
+    }
+  }
+}

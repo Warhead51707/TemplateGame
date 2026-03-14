@@ -62,6 +62,26 @@ public class TileGrid : Component
 
         Tiles.Clear();
         collisionTileCache.Clear();
+
+        if (saveData.Json.TryGetValue("components", out JsonElement components))
+        {
+            foreach (JsonElement component in components.EnumerateArray())
+            {
+                if (component.TryGetProperty("tiles", out JsonElement tiles))
+                {
+                    foreach (JsonElement tile in tiles.EnumerateArray())
+                    {
+                        string tileName = tile.GetProperty("name").GetString();
+
+                        JsonElement pos = tile.GetProperty("position");
+                        int x = pos.GetProperty("x").GetInt32();
+                        int y = pos.GetProperty("y").GetInt32();
+
+                        PlaceTile(new Vector2(x, y), tileName);
+                    }
+                }
+            }
+        }
     }
 
     public void PlaceTile(Vector2 gridPosition, string name)

@@ -160,19 +160,7 @@ public class DebugMainMenu : DebugUI
 
         if (ImGui.Button("Toggle Collision Box Visibility"))
         {
-            foreach (Collider collider in currentScene.GetGameObjectComponents<Collider>())
-            {
-                collider.ShowCollisionBox();
-            }
-
-            foreach (TileGrid tileGrid in currentScene.GetGameObjectComponents<TileGrid>())
-            {
-                foreach (CollisionTile collisionTile in tileGrid.GetCollisionTiles())
-                {
-                    collisionTile.ShowCollisionBox();
-                }
-            }
-
+            DebugToggles.ShowColliders = !DebugToggles.ShowColliders;
         } 
 
         ImGui.End();

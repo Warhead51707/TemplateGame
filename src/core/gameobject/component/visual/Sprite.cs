@@ -16,11 +16,13 @@ public class Sprite : Component
     public float LayerOffset { get; set; } = 0;
     public SpriteEffects Effect { get; set; } = SpriteEffects.None;
     public Vector2 Size { get; set; } = Vector2.Zero;
+    public Rectangle rectangle { get; set; }
 
     public Sprite(GameObject parent, string path) : base("sprite", parent)
     {
         Texture = Main.ContentManager.Load<Texture2D>("assets/" + path);
         Size = new Vector2(Texture.Width, Texture.Height);
+        rectangle = new Rectangle(-(Texture.Width / 2), -(Texture.Height / 2), Texture.Width, Texture.Height);
     }
 
     public override void Draw()

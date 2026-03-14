@@ -28,6 +28,7 @@ public enum SceneState
     }
 
     private List<GameObject> gameObjects = new List<GameObject>();
+    private GameObject[] gameObjectsSnapshot = new GameObject[0];
     private IEnumerable<IGrouping<RenderLayer, GameObject>> drawCache = Enumerable.Empty<IGrouping<RenderLayer, GameObject>>();
     private Func<Scene> registerFunc;
 
@@ -58,11 +59,17 @@ public enum SceneState
 
     public virtual void Update()
     {
-        if (drawCache != gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order))
+        if (drawCache != gameObjectsSnapshot.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order))
         {
-            drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
+            drawCache = gameObjectsSnapshot.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
         }
-        foreach (GameObject gameObject in gameObjects)
+
+        lock (gameObjects)
+        {
+            gameObjectsSnapshot = gameObjects.ToArray();
+        }
+
+        foreach (GameObject gameObject in gameObjectsSnapshot)
         {
             gameObject.Update();
         }
@@ -113,6 +120,14 @@ public enum SceneState
 
         gameObjects = gameObjects.OrderByDescending(g => g.Priority).ToList();
         drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
+    }
+
+    public void AddGameObjects(params GameObject[] gameObjects)
+    {
+        foreach (GameObject gameObject in gameObjects)
+        {
+            AddGameObject(gameObject);
+        }
     }
 
     public void RemoveGameObject(GameObject gameObject)

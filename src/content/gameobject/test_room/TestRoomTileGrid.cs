@@ -56,33 +56,4 @@ public class TestRoomTileGrid : GameObject
             }
         }
     }
-
-    public override void Load(SaveData saveData)
-    {
-        base.Load(saveData);
-
-        TileGrid tileGrid = GetComponent<TileGrid>();
-
-        if (saveData.Json.TryGetValue("components", out JsonElement components))
-        {
-            foreach (JsonElement component in components.EnumerateArray())
-            {
-                if (component.TryGetProperty("tiles", out JsonElement tiles))
-                {
-                    foreach (JsonElement tile in tiles.EnumerateArray())
-                    {
-                        string tileName = tile.GetProperty("name").GetString();
-
-                        JsonElement pos = tile.GetProperty("position");
-                        int x = pos.GetProperty("x").GetInt32();
-                        int y = pos.GetProperty("y").GetInt32();
-
-                        tileGrid.PlaceTile(new Vector2(x, y), tileName);
-
-                        //Debug.WriteLine(tileName + " " + x + ", " + y);
-                    }
-                }
-            }
-        }
-    }
 }

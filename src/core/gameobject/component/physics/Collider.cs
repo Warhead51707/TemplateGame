@@ -14,7 +14,7 @@ public class Collider : Component
     public Rectangle CollisionBox = Rectangle.Empty;
     public Vector2 MovementOffset = Vector2.Zero;
 
-    private bool showCollisionBox = false;
+    private Color collisionBoxColor = new Color(Color.Blue, 0.3f);
 
     public Collider(GameObject parent, Rectangle rectangle) : base("collider", parent)
     {
@@ -77,20 +77,15 @@ public class Collider : Component
         OverlapRectangle = Rectangle.Empty;
     }
 
-    public void ShowCollisionBox()
-    {
-        showCollisionBox = !showCollisionBox;
-    }
-
     public override void Draw()
     {
         base.Draw();
 
-        if (!showCollisionBox) { return; }
+        if (!DebugToggles.ShowColliders) { return; }
 
         Vector2 boxPosition = new Vector2((int)Parent.Position.X + CollisionBox.X + (int)MovementOffset.X, (int)Parent.Position.Y + CollisionBox.Y + (int)MovementOffset.Y);
         Rectangle destination = new Rectangle((int)boxPosition.X, (int)boxPosition.Y, CollisionBox.Width, CollisionBox.Height);
 
-        DrawManager.SpriteBatch.Draw(DrawManager.Pixel, destination, null, Color.Blue, 0f, Vector2.Zero, SpriteEffects.None, 0.01f);
+        DrawManager.SpriteBatch.Draw(DrawManager.Pixel, destination, null, collisionBoxColor, 0f, Vector2.Zero, SpriteEffects.None, 0.01f);
     }
 }
