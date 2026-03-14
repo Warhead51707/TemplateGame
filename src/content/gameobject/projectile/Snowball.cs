@@ -13,7 +13,9 @@ public class Snowball : Projectile
 
         Collider collider = new Collider(this, new Rectangle(-3, -3, 6, 6));
 
-        AddComponents(collider, sprite);
+        Timer timer = new Timer(this, 25f, () => Destroy());
+
+        AddComponents(collider, sprite, timer);
     }
 
     public override void Update()

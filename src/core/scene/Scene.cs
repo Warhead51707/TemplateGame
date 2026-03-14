@@ -154,6 +154,11 @@ public enum SceneState
         return null;
     }
 
+    public List<GameObject> GetGameObjects()
+    {
+        return gameObjects;
+    }
+
     public List<GameObject> GetGameObjectsWithComponent<T>() where T : Component
     {
         List<GameObject> result = new List<GameObject>();

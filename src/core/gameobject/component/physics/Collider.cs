@@ -63,7 +63,7 @@ public class Collider : Component
 
             if (parentBox.Intersects(rectangle))
             {
-                Debug.WriteLine($"Collision detected between {Parent.Name} and rectangle at {rectangle.X}, {rectangle.Y}");
+                //Debug.WriteLine($"Collision detected between {Parent.Name} and rectangle at {rectangle.X}, {rectangle.Y}");
 
                 IsColliding = true;
                 CollidingRectangle = rectangle;

@@ -2,6 +2,7 @@
 using System.IO;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace TemplateGame;
 
@@ -26,6 +27,9 @@ public class DebugMainMenu : DebugUI
     public string[] scenesToLoad = null;
     public int selectedSceneIndex = 0;
 
+    // Gameobjects window
+    public bool gameObjectsWindow = false;
+
     public override void Draw()
     {
         MenuBar();
@@ -43,6 +47,11 @@ public class DebugMainMenu : DebugUI
         if (sceneSaveLoad)
         {
             SceneSaveLoad();
+        }
+
+        if (gameObjectsWindow)
+        {
+            GameObjectsWindow();
         }
     }
 
@@ -69,6 +78,11 @@ public class DebugMainMenu : DebugUI
                 if (ImGui.MenuItem("Save/Load"))
                 {
                     sceneSaveLoad = true;
+                }
+
+                if (ImGui.MenuItem("Game Objects"))
+                {
+                    gameObjectsWindow = true;
                 }
 
                 ImGui.EndMenu();
@@ -200,6 +214,45 @@ public class DebugMainMenu : DebugUI
             {
                 Main.SceneManager.LoadScene(scenesToLoad[selectedSceneIndex]);
             }
+        }
+
+        ImGui.End();
+    }
+
+    public void GameObjectsWindow()
+    {
+        Scene scene = Main.SceneManager.CurrentScene;
+
+        ImGui.Begin("Scene - Game Objects", ref gameObjectsWindow);
+
+        List<GameObject> gameObjects = scene.GetGameObjects();
+
+        ImGui.Text("Game Objects in Scene: " + gameObjects.Count);
+
+        ImGui.SeparatorText("Game Objects");
+
+        int index = 0;
+
+        foreach (GameObject gameObject in gameObjects)
+        {
+            if (ImGui.CollapsingHeader(gameObject.Name + "(" + index + ")"))
+            {
+                ImGui.SeparatorText("Properties");
+
+                ImGui.Text("Name: " + gameObject.Name);
+                ImGui.Text("Position: " + gameObject.Position);
+                ImGui.Text("Render Layer: " + gameObject.RenderLayer);
+                ImGui.Text("Priority: " + gameObject.Priority);
+
+                ImGui.SeparatorText("Actions");
+
+                if (ImGui.Button("Destroy " + gameObject.Name))
+                {
+                    gameObject.Destroy();
+                }
+            }
+
+            index++;
         }
 
         ImGui.End();
