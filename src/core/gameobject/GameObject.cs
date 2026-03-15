@@ -98,8 +98,6 @@ public abstract class GameObject
 
     public virtual void Load(SaveData saveData)
     {
-        SaveData = saveData;
-
         foreach (Component component in Components)
         {
             component.Load(saveData);

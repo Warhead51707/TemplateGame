@@ -156,7 +156,7 @@ public enum SceneState
 
     public List<GameObject> GetGameObjects()
     {
-        return gameObjects;
+        return gameObjectsSnapshot.ToList();
     }
 
     public List<GameObject> GetGameObjectsWithComponent<T>() where T : Component

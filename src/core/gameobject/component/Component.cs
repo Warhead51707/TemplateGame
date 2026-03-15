@@ -42,6 +42,6 @@ public abstract class Component
 
     public virtual void Load(SaveData saveData)
     {
-        SaveData = saveData;
+        
     }
 }

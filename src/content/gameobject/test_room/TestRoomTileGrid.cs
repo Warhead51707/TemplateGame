@@ -23,37 +23,5 @@ public class TestRoomTileGrid : GameObject
         base.Initialize();
 
         TileGrid tileGrid = GetComponent<TileGrid>();
-
-        for (int x = -60; x <= 60; x++)
-        {
-            for (int y = -40; y <= 40; y++)
-            {
-                Vector2 pos = new Vector2(x, y);
-
-                if (pos == new Vector2(-2, -2))
-                {
-                    tileGrid.PlaceTile(pos, "test_collision_tile");
-                    continue;
-                }
-
-                Random random = new Random();
-
-                int number = random.Next(0, 10);
-
-                if (number < 7)
-                {
-                    tileGrid.PlaceTile(pos, "snow_1");
-                    continue;
-                }
-
-                if (number >= 7 && number < 9)
-                {
-                    tileGrid.PlaceTile(pos, "snow_2");
-                    continue;
-                }
-
-                tileGrid.PlaceTile(pos, "snow_3");
-            }
-        }
     }
 }
