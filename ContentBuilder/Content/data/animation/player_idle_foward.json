@@ -1,5 +1,5 @@
 {
-  "spritesheet": "player_down",
+  "spritesheet": "character/player/player_down",
   "frame_size": {
     "width": 16,
     "height": 16

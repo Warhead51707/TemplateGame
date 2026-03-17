@@ -1,5 +1,5 @@
 {
-  "spritesheet": "player_left",
+  "spritesheet": "character/player/player_left",
   "frame_size": {
     "width": 16,
     "height": 16

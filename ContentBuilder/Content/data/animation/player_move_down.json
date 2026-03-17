@@ -1,9 +1,9 @@
 {
-  "spritesheet": "character/player/player_right",
+  "spritesheet": "animation/player/move_down",
   "frame_size": {
     "width": 16,
     "height": 16
   },
-  "frame_length": 1,
+  "frame_length": 0.14,
   "loop": true
 }

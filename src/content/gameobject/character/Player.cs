@@ -9,9 +9,11 @@ namespace TemplateGame;
 public class Player : GameObject
 {
     // Speeds
-    private float movementSpeed = 40f;
+    private float movementSpeed = 55f;
 
+    // Movement
     private Vector2 facingDirection = Vector2.Zero;
+    private bool isMoving = false;
 
     // Input
     private KeyboardState previousKeyboardState = Keyboard.GetState();
@@ -23,10 +25,15 @@ public class Player : GameObject
     public override void SetComponents()
     {
         AnimationTree animationTree = new AnimationTree(this);
-        animationTree.AddAnimation("player_idle_foward", _ => facingDirection == Vector2.Zero || facingDirection == new Vector2(0, 1));
-        animationTree.AddAnimation("player_idle_left", _ => facingDirection == new Vector2(-1, 0));
-        animationTree.AddAnimation("player_idle_right", _ => facingDirection == new Vector2(1, 0));
-        animationTree.AddAnimation("player_move_up", _ => facingDirection == new Vector2(0, -1));
+        animationTree.AddAnimation("player_idle_foward", _ => (facingDirection == Vector2.Zero || facingDirection == new Vector2(0, 1)) && !isMoving);
+        animationTree.AddAnimation("player_idle_left", _ => facingDirection == new Vector2(-1, 0) && !isMoving);
+        animationTree.AddAnimation("player_idle_right", _ => facingDirection == new Vector2(1, 0) && !isMoving);
+
+        animationTree.AddAnimation("player_move_down", _ => facingDirection == new Vector2(0, 1) && isMoving);
+        animationTree.AddAnimation("player_move_up", _ => facingDirection == new Vector2(0, -1) && isMoving);
+        animationTree.AddAnimation("player_move_left", _ => facingDirection == new Vector2(-1, 0) && isMoving);
+        animationTree.AddAnimation("player_move_right", _ => facingDirection == new Vector2(1, 0) && isMoving);
+
 
         PlayerDebugTools playerDebugTools = new PlayerDebugTools(this);
 
@@ -99,7 +106,11 @@ public class Player : GameObject
 
         previousKeyboardState = keyboardState;
 
-        if (movementDirection.X == 0 && movementDirection.Y == 0) return;
+        if (movementDirection.X == 0 && movementDirection.Y == 0)
+        {
+            isMoving = false;
+            return;
+        }
 
         facingDirection = movementDirection;
 
@@ -118,6 +129,8 @@ public class Player : GameObject
 
             return;
         }
+
+        isMoving = true;
 
         Position += movementDirection * movementSpeed * Main.DeltaTime;
     }
