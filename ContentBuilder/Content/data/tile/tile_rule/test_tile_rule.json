@@ -1,0 +1,71 @@
+{
+  "rules": [
+    {
+      "type": "collision",
+      "properties": {
+        "rectangle": {
+          "x": 0,
+          "y": 0,
+          "width": 16,
+          "height": 16
+        }
+      }
+    },
+    {
+      "type": "render",
+      "properties": {
+        "texture": "debug_tile",
+        "source_rectangle": {
+          "x": 0,
+          "y": 0,
+          "width": 16,
+          "height": 16
+        },
+        "color": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "a": 255
+        },
+        "layer": 0,
+        "layer_transformations": [
+          {
+            "source_rectangle": {
+              "x": 0,
+              "y": 0,
+              "width": 16,
+              "height": 8
+            },
+            "layer": 1
+          }
+        ]
+      }
+    },
+    {
+      "type": "placement",
+      "properties": {
+        "neighbor_transformations": [
+          {
+            "neighbors": [
+              "snow_top_middle",
+              "snow_side_left"
+            ],
+            "neighbor_rule": [
+              "   ",
+              "  #",
+              " # "
+            ],
+            "transformation_rules": [
+              {
+                "type": "render",
+                "properties": {
+                  "texture":  "snow_top_left_corner"
+                }
+              }
+            ] 
+          }
+        ]
+      }
+    }
+  ]
+}

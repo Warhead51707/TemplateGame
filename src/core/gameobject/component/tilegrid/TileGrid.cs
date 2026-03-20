@@ -14,7 +14,7 @@ public class TileGrid : Component
     public RenderLayer RenderLayer { get; protected set; }
     public Vector2 TileSize { get; protected set; }
 
-    private List<CollisionTile> collisionTileCache = new List<CollisionTile>();
+    private List<Tile> collisionTileCache = new List<Tile>();
 
     public TileGrid(GameObject parent, Vector2 tileSize) : base("tilegrid", parent)
     {
@@ -26,19 +26,12 @@ public class TileGrid : Component
     {
         List<Rectangle> collisionBoxes = new List<Rectangle>();
 
-        foreach (CollisionTile tile in collisionTileCache)
+        foreach (Tile tile in collisionTileCache)
         {
-            collisionBoxes.Add(tile.collisionBox);
-
-           // Debug.WriteLine("Collision box for tile at " + tile.GridPosition + ": " + tile.collisionBox);
+            collisionBoxes.AddRange(tile.GetCollisionBoxes());
         }
 
         return collisionBoxes;
-    }
-
-    public List<CollisionTile> GetCollisionTiles()
-    {
-        return collisionTileCache;
     }
 
     public override SaveData Save()
@@ -96,22 +89,13 @@ public class TileGrid : Component
 
         Tile tile = new Tile(this, tileModel);
 
-        bool hasCollision = tileModel.Collision != null;
-
-        if (hasCollision)
-        {
-            tile = new CollisionTile(this, tileModel);
-        }
-
         if (tile == null) return;
 
         tile.GridPosition = gridPosition;
 
-        if (hasCollision)
+        if (tile.HasCollision())
         {
-            collisionTileCache.Add((CollisionTile)tile);
-
-            Debug.WriteLine("Added collision tile at " + gridPosition + " with collision box: " + ((CollisionTile)tile).collisionBox);
+            collisionTileCache.Add(tile);
         }
 
         tile.OnPlace();

@@ -64,6 +64,12 @@ public class Player : GameObject
 
         KeyboardState keyboardState = Keyboard.GetState();
 
+        if (keyboardState.IsKeyDown(Keys.J) && !previousKeyboardState.IsKeyDown(Keys.J))
+        {
+            Tree tree = new Tree(new Vector2(32, 32));
+            Main.SceneManager.CurrentScene.AddGameObject(tree);
+        }
+
         if (keyboardState.IsKeyDown(Keys.Space) && !previousKeyboardState.IsKeyDown(Keys.Space))
         {
             Vector2 snowballDirection = facingDirection;
