@@ -48,6 +48,11 @@ public class Tile
             {
                 TileRules.Add(new CollisionTileRule(this, rule.Properties));
             }
+
+            if (rule.Type == "placement")
+            {
+                TileRules.Add(new PlacementTileRule(this, rule.Properties));
+            }
         }
 
     }
@@ -70,24 +75,78 @@ public class Tile
         return collisionBoxes;
     }
 
+    public T GetTileRule<T>() where T : TileRule
+    {
+        return TileRules.FirstOrDefault(rule => rule is T) as T;
+    }
+
+    public List<Tile> GetNeighbors()
+    {
+        List<Tile> neighbors = new List<Tile>();
+
+        Vector2[] directions = new Vector2[]
+        {
+            new Vector2(-1, -1),
+            new Vector2(0, -1),
+            new Vector2(1, -1),
+            new Vector2(-1, 0),
+            new Vector2(0, 0),
+            new Vector2(1, 0),
+            new Vector2(-1, 1),
+            new Vector2(0, 1),
+            new Vector2(1, 1),
+        };
+
+        foreach (Vector2 direction in directions)
+        {
+            Vector2 neighborPosition = GridPosition + direction;
+
+            Tile neighborTile = TileGrid.GetTile(neighborPosition);
+
+            if (neighborTile != null)
+            {
+                neighbors.Add(neighborTile);
+            } else
+            {
+                neighbors.Add(null);
+            }
+        }
+
+        return neighbors;
+    }
+
     public virtual void OnPlace()
     {
-        foreach (TileRule tileRule in TileRules)
+        TileRule[] tileRuleSnapshot = TileRules.ToArray();
+
+        foreach (TileRule tileRule in tileRuleSnapshot)
         {
             tileRule.OnPlace();
         }
     }
 
+    public virtual void NeighborUpdate()
+    {
+        TileRule[] tileRuleSnapshot = TileRules.ToArray();
+
+        foreach (TileRule tileRule in tileRuleSnapshot)
+        {
+            tileRule.NeighborUpdate();
+        }
+    }
+
     public virtual void Draw()
     {
-        List<RenderTileRule> renderTileRules = TileRules.Where(rule => rule is RenderTileRule).Select(rule => (RenderTileRule)rule).ToList();
+        TileRule[] tileRulesSnapshot = TileRules.ToArray();
+
+        List<RenderTileRule> renderTileRules = tileRulesSnapshot.Where(rule => rule is RenderTileRule).Select(rule => (RenderTileRule)rule).ToList();
 
         foreach (RenderTileRule renderTileRule in renderTileRules)
         {
             renderTileRule.Draw();
         }
 
-        List<CollisionTileRule> collisionTileRules = TileRules.Where(rule => rule is CollisionTileRule).Select(rule => (CollisionTileRule)rule).ToList();
+        List<CollisionTileRule> collisionTileRules = tileRulesSnapshot.Where(rule => rule is CollisionTileRule).Select(rule => (CollisionTileRule)rule).ToList();
 
         foreach (CollisionTileRule collisionTileRule in collisionTileRules)
         {

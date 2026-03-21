@@ -50,10 +50,12 @@
               "snow_top_middle",
               "snow_side_left"
             ],
-            "neighbor_rule": [
-              "   ",
-              "  #",
-              " # "
+            "neighbor_rules": [
+              [
+                "   ",
+                "  #",
+                " # "
+              ]
             ],
             "transformation_rules": [
               {

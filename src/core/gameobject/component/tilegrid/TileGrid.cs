@@ -77,6 +77,16 @@ public class TileGrid : Component
         }
     }
 
+    public Tile GetTile(Vector2 gridPosition)
+    {
+        if (Tiles.ContainsKey(gridPosition))
+        {
+            return Tiles[gridPosition];
+        }
+
+        return null;
+    }
+
     public void PlaceTile(Vector2 gridPosition, string name)
     {
         string jsonFileContents = File.ReadAllText("Content/data/tile/" + name + ".json");
@@ -99,6 +109,13 @@ public class TileGrid : Component
         }
 
         tile.OnPlace();
+
+        foreach (Tile neighbor in tile.GetNeighbors())
+        {
+            if (neighbor == null) continue;
+
+            neighbor.NeighborUpdate();
+        }
 
         if (Tiles.ContainsKey(gridPosition))
         {

@@ -102,8 +102,8 @@ public class TileRuleModel
         [JsonPropertyName("neighbors")]
         public List<string> Neighbors { get; set; }
 
-        [JsonPropertyName("neighbor_rule")]
-        public List<string> NeighborRule { get; set; }
+        [JsonPropertyName("neighbor_rules")]
+        public List<List<string>> NeighborRules { get; set; }
 
         [JsonPropertyName("transformation_rules")]
         public List<Rule> TransformationRules { get; set; }

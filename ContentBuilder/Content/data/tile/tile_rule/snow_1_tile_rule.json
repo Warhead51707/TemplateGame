@@ -1,0 +1,32 @@
+{
+  "rules": [
+    {
+      "type": "placement",
+      "properties": {
+        "neighbor_transformations": [
+          {
+            "neighbors": [
+              "snow_top_middle",
+              "snow_side_left"
+            ],
+            "neighbor_rules": [
+              [
+                "   ",
+                "  #",
+                " # "
+              ]
+            ],
+            "transformation_rules": [
+              {
+                "type": "render",
+                "properties": {
+                  "texture": "snow_top_left_corner"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
