@@ -15,8 +15,9 @@ public class TestRoom : Scene
         Player player = new Player(Vector2.Zero);
 
         TestRoomTileGrid tileGrid = new TestRoomTileGrid(Vector2.Zero);
+        PlantsTileGrid plantsTileGrid = new PlantsTileGrid(Vector2.Zero);
 
-        AddGameObjects(player, tileGrid);
+        AddGameObjects(player, tileGrid, plantsTileGrid);
 
         Camera.SetTarget(player);
 

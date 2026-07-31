@@ -27,27 +27,42 @@ public class PlacementTileRule : TileRule
         // Valid neighbor indexes:
         foreach (Tile tile in neighborTiles) {
             if (tile != null) {
-                Debug.WriteLine($"Neighbor tile at index {neighborTiles.IndexOf(tile)}: {tile.Name}");
+              //  Debug.WriteLine($"Neighbor tile at index {neighborTiles.IndexOf(tile)}: {tile.Name}");
             } else {
-                Debug.WriteLine($"Neighbor tile at index {neighborTiles.IndexOf(tile)}: null");
+              //  Debug.WriteLine($"Neighbor tile at index {neighborTiles.IndexOf(tile)}: null");
             }
         }
 
         foreach (TileRuleModel.NeighborTransformation neighborTransformation in Properties.NeighborTransformations)
         {
-            List<List<int>> neighborPatternsIndexes = GetNeighborPatternsIndexes(neighborTransformation.NeighborRules);
+            List<List<(int index, string type)>> neighborPatternsIndexes = GetNeighborPatternsIndexes(neighborTransformation.NeighborRules);
 
-            Debug.WriteLine($"Checking neighbor transformation with {neighborPatternsIndexes.Count} patterns");
+           // Debug.WriteLine($"Checking neighbor transformation with {neighborPatternsIndexes.Count} patterns");
 
-            foreach (List<int> neighborIndex in neighborPatternsIndexes)
+            foreach (List<(int index, string type)> neighborIndex in neighborPatternsIndexes)
             {
                 int matches = 0;
 
-                foreach (int index in neighborIndex)
+                foreach ((int index, string type) indexPair in neighborIndex)
                 {
-                    Debug.WriteLine($"Checking neighbor at index {index} with name {neighborTiles[index]?.Name ?? "null"} against transformation neighbors: {string.Join(", ", neighborTransformation.Neighbors)}");
+                   // Debug.WriteLine($"Checking neighbor at index {indexPair.index} with name {neighborTiles[indexPair.index]?.Name ?? "null"} against transformation neighbors: {string.Join(", ", neighborTransformation.Neighbors)}");
 
-                    if (neighborTiles[index] == null || !neighborTransformation.Neighbors.Contains(neighborTiles[index].Name))
+                    if (neighborTiles[indexPair.index] == null && indexPair.type == "normal")
+                    {
+                        continue;
+                    }
+
+                    if (neighborTiles[indexPair.index] == null && indexPair.type == "empty")
+                    {
+                        matches++;
+                        continue;
+                    }
+
+                    if (!neighborTransformation.Neighbors.Contains(neighborTiles[indexPair.index].GetTileRule<RenderTileRule>().TextureName) && !neighborTransformation.Neighbors.Contains(neighborTiles[indexPair.index].Name) && indexPair.type == "normal") {
+                        continue;
+                    }
+
+                    if (neighborTiles[indexPair.index] != null && indexPair.type == "empty")
                     {
                         continue;
                     }
@@ -55,13 +70,15 @@ public class PlacementTileRule : TileRule
                     matches++;
                 }
 
-                Debug.WriteLine($"Pattern with indexes {string.Join(", ", neighborIndex)} has {matches} matches");
+                //Debug.WriteLine($"Pattern with indexes {string.Join(", ", neighborIndex)} has {matches} matches");
 
                 if (matches == neighborIndex.Count)
                 {
                     ApplyNeighborTransformationRules(neighborTransformation.TransformationRules);
 
-                    Debug.WriteLine($"Applied neighbor transformation with {neighborIndex.Count} matches");
+                   // Debug.WriteLine($"Applied neighbor transformation with {neighborIndex.Count} matches");
+
+                    return;
                 }
             }
         }
@@ -81,13 +98,13 @@ public class PlacementTileRule : TileRule
         }
     }
 
-    public List<List<int>> GetNeighborPatternsIndexes(List<List<string>> patterns)
+    public List<List<(int index, string type)>> GetNeighborPatternsIndexes(List<List<string>> patterns)
     {
-        List<List<int>> indexes = new List<List<int>>();
+        List<List<(int index, string type)>> indexes = new List<List<(int index, string type)>>();
 
         foreach (List<string> pattern in patterns)
         {
-            List<int> patternIndexes = new List<int>();
+            List<(int index, string type)> patternIndexes = new List<(int index, string type)>();
             int patternTileIndex = 0;
 
             for (int i = 0; i < 3; i++)
@@ -100,7 +117,12 @@ public class PlacementTileRule : TileRule
 
                     if (patternTile == "#")
                     {
-                        patternIndexes.Add(patternTileIndex);
+                        patternIndexes.Add((patternTileIndex, "normal"));
+                    }
+
+                    if (patternTile == "!")
+                    {
+                        patternIndexes.Add((patternTileIndex, "empty"));
                     }
 
                     patternTileIndex++;

@@ -154,6 +154,19 @@ public enum SceneState
         return null;
     }
 
+    public List<T> GetGameObjects<T>() where T : GameObject
+    {
+        List<T> result = new List<T>();
+        foreach (GameObject gameObject in gameObjects)
+        {
+            if (gameObject is T)
+            {
+                result.Add((T)gameObject);
+            }
+        }
+        return result;
+    }
+
     public List<GameObject> GetGameObjects()
     {
         return gameObjectsSnapshot.ToList();

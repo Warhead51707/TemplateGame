@@ -110,13 +110,6 @@ public class TileGrid : Component
 
         tile.OnPlace();
 
-        foreach (Tile neighbor in tile.GetNeighbors())
-        {
-            if (neighbor == null) continue;
-
-            neighbor.NeighborUpdate();
-        }
-
         if (Tiles.ContainsKey(gridPosition))
         {
             Tiles[gridPosition] = tile;
@@ -124,6 +117,13 @@ public class TileGrid : Component
         }
 
         Tiles.Add(gridPosition, tile);
+
+        foreach (Tile neighbor in tile.GetNeighbors())
+        {
+            if (neighbor == null) continue;
+
+            neighbor.NeighborUpdate();
+        }
     } 
 
     public override void Draw()

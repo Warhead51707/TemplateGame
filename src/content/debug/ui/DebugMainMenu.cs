@@ -14,6 +14,7 @@ public class DebugMainMenu : DebugUI
     // Tilemap editor
     public string[] tiles = null;
     public int selectedTileIndex = 0;
+    public GameObject selectedTileGrid = null;
 
     // Scene Windows
     public bool sceneSaveLoad = false;
@@ -96,6 +97,7 @@ public class DebugMainMenu : DebugUI
     {
         Scene currentScene = Main.SceneManager.CurrentScene;
         PlayerDebugTools playerDebugTools = currentScene.GetGameObject<Player>().GetComponent<PlayerDebugTools>();
+        List<GameObject> tileGrids = currentScene.GetGameObjectsWithComponent<TileGrid>();
 
         if (tiles == null)
         {
@@ -113,13 +115,37 @@ public class DebugMainMenu : DebugUI
 
         ImGui.Text("Tilemap Editor - " + (playerDebugTools.tilemapEditorEnabled ? "Enabled" : "Disabled"));
 
+        if (selectedTileGrid == null && tileGrids.Count > 0) 
+        {
+            selectedTileGrid = tileGrids[0];
+        }
+
+        if (ImGui.BeginCombo("TileGrids", selectedTileGrid.Name))
+        {
+            for (int i = 0; i < tileGrids.Count; i++)
+            {
+                bool isSelected = (selectedTileGrid == tileGrids[i]);
+
+                if (ImGui.Selectable(tileGrids[i].Name, isSelected))
+                {
+                    selectedTileGrid = tileGrids[i];
+                }
+                if (isSelected)
+                {
+                    ImGui.SetItemDefaultFocus();
+                }
+            }
+
+            ImGui.EndCombo();
+        }
+
         if (ImGui.Button("Toggle Tilemap Editor"))
         {
             playerDebugTools.ToggleTilemapEditor();
 
             if (playerDebugTools.tilemapEditorEnabled)
             {
-                TilePlacer tilePlacer = new TilePlacer(tiles[selectedTileIndex]);
+                TilePlacer tilePlacer = new TilePlacer(tiles[selectedTileIndex], selectedTileGrid);
                 currentScene.AddGameObject(tilePlacer);
             } else
             {
@@ -141,7 +167,7 @@ public class DebugMainMenu : DebugUI
                 currentScene.RemoveAllGameObjects<TilePlacer>();
             }
 
-            tilePlacer = new TilePlacer(tiles[selectedTileIndex]);
+            tilePlacer = new TilePlacer(tiles[selectedTileIndex], selectedTileGrid);
             currentScene.AddGameObject(tilePlacer);
 
         }

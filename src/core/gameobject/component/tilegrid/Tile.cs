@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -48,13 +49,7 @@ public class Tile
             {
                 TileRules.Add(new CollisionTileRule(this, rule.Properties));
             }
-
-            if (rule.Type == "placement")
-            {
-                TileRules.Add(new PlacementTileRule(this, rule.Properties));
-            }
         }
-
     }
 
     public bool HasCollision()
@@ -131,7 +126,7 @@ public class Tile
 
         foreach (TileRule tileRule in tileRuleSnapshot)
         {
-            tileRule.NeighborUpdate();
+           tileRule.NeighborUpdate();
         }
     }
 

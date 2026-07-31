@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using SharpDX.Direct3D9;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,14 +16,16 @@ namespace TemplateGame;
 
 public class TilePlacer : GameObject
 {
+    private TileGrid placedTileGrid;
     private TileModel tileModel;
     private string tileName;
 
     private float blinkTimer = 0f;
     private MouseState previousMouseState = Mouse.GetState();
 
-    public TilePlacer(string tileName) : base("tile_placer", Vector2.Zero)
+    public TilePlacer(string tileName, GameObject tileGrid) : base("tile_placer", Vector2.Zero)
     {
+        this.placedTileGrid = tileGrid.GetComponent<TileGrid>();
         string jsonFileContents = File.ReadAllText("Content/data/tile/" + tileName + ".json");
         TileModel tileModel = JsonSerializer.Deserialize<TileModel>(jsonFileContents);
 
@@ -64,9 +67,7 @@ public class TilePlacer : GameObject
 
         if (mouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released && !ImGui.GetIO().WantCaptureMouse)
         {
-            TileGrid tileGrid = Main.SceneManager.CurrentScene.GetGameObject<TestRoomTileGrid>().GetComponent<TileGrid>();
-
-            tileGrid.PlaceTile(new Vector2((int)(Position.X / 16), (int)(Position.Y / 16)), tileName);
+            placedTileGrid.PlaceTile(new Vector2((int)(Position.X / 16), (int)(Position.Y / 16)), tileName);
         }
 
         previousMouseState = mouseState;

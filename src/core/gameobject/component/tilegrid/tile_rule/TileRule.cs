@@ -20,7 +20,10 @@ public abstract class TileRule
 
     public virtual void OnPlace() { }
 
-    public virtual void NeighborUpdate() { }
+    public virtual void NeighborUpdate()
+    {
+        
+    }
 
     public virtual void Draw() { }
 }

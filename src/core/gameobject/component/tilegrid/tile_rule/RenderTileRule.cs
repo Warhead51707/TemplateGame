@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace TemplateGame;
 public class RenderTileRule : TileRule
 {
+    public string TextureName;
     public Texture2D Texture;
     public Rectangle SourceRectangle;
     public Color Color;
@@ -14,9 +15,11 @@ public class RenderTileRule : TileRule
         if (ruleProperties.Texture != null && ruleProperties.Texture != string.Empty)
         {
             Texture = Main.ContentManager.Load<Texture2D>("assets/tile/" + ruleProperties.Texture);
+            TextureName = ruleProperties.Texture;
         } else
         {
             Texture = Parent.Texture;
+            TextureName = Parent.Name;
         }
 
         if (ruleProperties.SourceRectangle.Width != 0 && ruleProperties.SourceRectangle.Height != 0)
