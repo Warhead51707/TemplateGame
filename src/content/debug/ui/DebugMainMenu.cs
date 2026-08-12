@@ -201,7 +201,24 @@ public class DebugMainMenu : DebugUI
         if (ImGui.Button("Toggle Collision Box Visibility"))
         {
             DebugToggles.ShowColliders = !DebugToggles.ShowColliders;
-        } 
+        }
+        
+        if (ImGui.Button("Toggle Overlay Effects"))
+        {
+            OverlayEffectsSpawner spawner = currentScene.GetGameObject<OverlayEffectsSpawner>();
+
+            if (spawner != null)
+            {
+                if (spawner.isEnabled())
+                {
+                    spawner.StopSpawning();
+                }
+                else
+                {
+                    spawner.StartSpawning();
+                }
+            }
+        }
 
         ImGui.End();
     }

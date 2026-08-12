@@ -7,6 +7,7 @@ namespace TemplateGame;
 public class RenderSettings
 {
     public static RenderSettings Default = new RenderSettings(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointWrap, null, null, null, Matrix.Identity);
+    public static RenderSettings Overlay = new RenderSettings(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointWrap, null, null, null, Matrix.Identity * Matrix.CreateScale(3));
 
     public SpriteSortMode SortMode;
     public BlendState BlendState;

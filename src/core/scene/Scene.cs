@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Text.Json;
 using System.IO;
+using System.Threading;
 
 namespace TemplateGame;
 
@@ -55,15 +56,17 @@ public enum SceneState
         {
             Register(registerFunc);
         }
+
+        Main.GameWindow.ClientSizeChanged += OnResize;
+    }
+
+    public void OnResize(object sender, EventArgs e)
+    {
+        RenderLayers.UpdateRenderTargets();
     }
 
     public virtual void Update()
     {
-        if (drawCache != gameObjectsSnapshot.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order))
-        {
-            drawCache = gameObjectsSnapshot.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
-        }
-
         lock (gameObjects)
         {
             gameObjectsSnapshot = gameObjects.ToArray();
@@ -79,20 +82,29 @@ public enum SceneState
 
     public virtual void Draw()
     {
+        List<RenderTarget2D> renderTargets = new List<RenderTarget2D>();
+
         foreach (var drawerGroup in drawCache)
         {
             RenderLayer renderLayer = drawerGroup.Key;
             RenderSettings renderSettings = renderLayer.RenderSettings;
 
-            bool hasRenderTarget = false;
+            Main.MainGraphicsDevice.SetRenderTarget(renderLayer.RenderTarget);
 
             if (renderLayer.RenderTarget != null)
             {
-                hasRenderTarget = true;
-                Main.MainGraphicsDevice.SetRenderTarget(renderLayer.RenderTarget);
+                Main.MainGraphicsDevice.Clear(Color.Transparent);
+                renderTargets.Add(renderLayer.RenderTarget);
             }
 
-            DrawManager.SpriteBatch.Begin(renderSettings.SortMode, renderSettings.BlendState, renderSettings.SamplerState, renderSettings.DepthStencilState, renderSettings.RasterizerState, renderSettings.Effect, Camera.Matrix);
+            Matrix matrix = Camera.Matrix;
+
+            if (renderLayer.HUD)
+            {
+                matrix = renderSettings.TransformMatrix;
+            }
+
+            DrawManager.SpriteBatch.Begin(renderSettings.SortMode, renderSettings.BlendState, renderSettings.SamplerState, renderSettings.DepthStencilState, renderSettings.RasterizerState, renderSettings.Effect, matrix);
 
             foreach (GameObject drawer in drawerGroup)
             {
@@ -100,16 +112,18 @@ public enum SceneState
             }
 
             DrawManager.SpriteBatch.End();
-
-            if (hasRenderTarget)
-            {
-                Main.MainGraphicsDevice.SetRenderTarget(null);
-
-                DrawManager.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-                DrawManager.SpriteBatch.Draw(renderLayer.RenderTarget, Vector2.Zero, Color.White);
-                DrawManager.SpriteBatch.End();
-            }
         }
+
+        Main.MainGraphicsDevice.SetRenderTarget(null);
+
+        DrawManager.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+        foreach (RenderTarget2D renderTarget in renderTargets)
+        {
+            DrawManager.SpriteBatch.Draw(renderTarget, Vector2.Zero, Color.White);
+        }
+        
+        DrawManager.SpriteBatch.End();
     }
 
     public void AddGameObject(GameObject gameObject)
@@ -119,27 +133,32 @@ public enum SceneState
         gameObjects.Add(gameObject);
 
         gameObjects = gameObjects.OrderByDescending(g => g.Priority).ToList();
-        drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
+        ReloadDrawCache();
     }
 
     public void AddGameObjects(params GameObject[] gameObjects)
     {
         foreach (GameObject gameObject in gameObjects)
         {
-            AddGameObject(gameObject);
+            gameObject.Initialize();
+
+            this.gameObjects.Add(gameObject);
         }
+
+        this.gameObjects = this.gameObjects.OrderByDescending(g => g.Priority).ToList();
+        ReloadDrawCache();
     }
 
     public void RemoveGameObject(GameObject gameObject)
     {
         gameObjects.Remove(gameObject);
-        drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
+        ReloadDrawCache();
     }
 
     public void RemoveAllGameObjects<T>() where T : GameObject
     {
         gameObjects.RemoveAll(g => g is T);
-        drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order);
+        ReloadDrawCache();
     }
 
     public T GetGameObject<T>() where T : GameObject
@@ -240,4 +259,9 @@ public enum SceneState
             gameObject.Load(gameObjectSaveData);
         }
     }
- }
+
+    private void ReloadDrawCache()
+    {
+        drawCache = gameObjects.GroupBy(d => d.RenderLayer).OrderBy(g => g.Key.Order).ToList();
+    }
+}

@@ -13,8 +13,8 @@ public class Timer : Component
     public event TimerFinishEvent OnTimerFinish;
 
     public float Time { get; private set; } = 0f;
-    public bool Loop { get; private set; } = false;
-    public bool Enabled { get; private set; } = true;
+    public bool Loop { get; set; } = false;
+    public bool Enabled { get; set; } = true;
     private float elapsedTime = 0f;
     public Timer(GameObject parent, float time, TimerFinishEvent timerFinishEvent) : base("timer", parent)
     {

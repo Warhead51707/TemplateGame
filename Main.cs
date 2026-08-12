@@ -12,6 +12,7 @@ public class Main : Game
     public static bool DebugMode = false;
 
     // References
+    public static GameWindow GameWindow;
     public static GraphicsDeviceManager GraphicsDeviceManager;
     public static GraphicsDevice MainGraphicsDevice;
     public static ContentManager ContentManager;
@@ -42,6 +43,7 @@ public class Main : Game
         Window.AllowUserResizing = true;
 
         //References 
+        GameWindow = Window;
         MainGraphicsDevice = GraphicsDevice;
         ContentManager = Content;
 

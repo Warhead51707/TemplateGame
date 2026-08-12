@@ -17,7 +17,9 @@ public class TestRoom : Scene
         TestRoomTileGrid tileGrid = new TestRoomTileGrid(Vector2.Zero);
         PlantsTileGrid plantsTileGrid = new PlantsTileGrid(Vector2.Zero);
 
-        AddGameObjects(player, tileGrid, plantsTileGrid);
+        OverlayEffectsSpawner overlayEffectsSpawner = new OverlayEffectsSpawner();
+
+        AddGameObjects(player, tileGrid, plantsTileGrid, overlayEffectsSpawner);
 
         Camera.SetTarget(player);
 
